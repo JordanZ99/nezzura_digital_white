@@ -168,6 +168,7 @@
       const finalTx = PAD_LEFT + finalClusterWidth / 2 - vw / 2;
       const finalTy = PAD_TOP + finalClusterHeight / 2 - vh / 2;
 
+      // ─── Normal animation: hero → compact ───
       pl.style.transform = `translate(${finalTx * e}px, ${finalTy * e}px)`;
       pl.style.gap = gap + 'px';
 
@@ -176,6 +177,14 @@
         el.style.letterSpacing = ls + 'em';
         el.style.fontWeight = fw;
       });
+
+      // ─── Extra scroll: once compact, continue translating upward with the page ───
+      // So NEZZURA scrolls up with the beach image instead of staying fixed
+      if (sy > SCROLL_RANGE) {
+        const extraScroll = sy - SCROLL_RANGE; // pixels scrolled past the animation
+        pl.style.transform = `translate(${finalTx}px, ${finalTy - extraScroll}px)`;
+        pl.style.gap = '0px'; // keep compact gap
+      }
 
       scrollTicking = false;
     }
