@@ -45,3 +45,38 @@
     ></iframe>
   </div>
 </section>
+
+<script>
+  (function () {
+    const hero = document.getElementById('hero');
+    if (!hero) return;
+
+    let ticking = false;
+
+    function updateOpacity() {
+      const rect = hero.getBoundingClientRect();
+      const wh = window.innerHeight;
+
+      // El hero mide 100vh. La opacidad va de 1 a 0 a medida que
+      // el hero se desplaza hacia arriba y sale del viewport.
+      // rect.top: 0 → -wh  (hero pasando hacia arriba)
+      const start = 0;          // empieza a desvanecer cuando el top del hero toca el borde superior
+      const end = -wh;          // completamente invisible cuando el hero ha subido 100vh
+      const progress = Math.max(0, Math.min(1, (rect.top - start) / (end - start)));
+      // progress: 0 → 1
+      const opacity = 1 - progress;
+
+      hero.style.opacity = opacity;
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateOpacity);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    updateOpacity();
+  })();
+</script>

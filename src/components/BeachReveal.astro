@@ -16,11 +16,20 @@
     display: block;
     will-change: clip-path;
   }
+
+  /* ─── Sección blanca debajo de la playa ─── */
+  #beach-white {
+    width: 100%;
+    height: 50vh;
+    background: #ffffff;
+  }
 </style>
 
 <section id="beach">
   <img src="/beachBackground.jpg" alt="Beach background" />
 </section>
+
+<section id="beach-white"></section>
 
 <script>
   (function () {
@@ -36,6 +45,7 @@
         const rect = beachSection.getBoundingClientRect();
         const wh = window.innerHeight;
 
+        // ─── Top reveal (existente): imagen se descubre de arriba a abajo ───
         const start = wh * 2;
         const end = 0;
         const total = start - end;
@@ -43,7 +53,16 @@
         let progress = Math.max(0.6, Math.min(1, scrolled / total));
 
         const reveal = 100 - progress * 100;
-        beachImg.style.clipPath = `inset(${reveal}% 0 0 0)`;
+
+        // ─── Bottom mask (nuevo): la imagen se desvanece suavemente por abajo ───
+        // Se activa cuando la parte inferior de la playa supera el borde inferior del viewport
+        const beachBottom = rect.bottom;
+        const fadeStart = wh;             // empieza cuando el borde inferior de la playa está al final del viewport
+        const fadeEnd = wh * 0.3;          // termina cuando está al 30% desde arriba
+        const bottomProgress = Math.max(0, Math.min(1, (fadeStart - beachBottom) / (fadeStart - fadeEnd)));
+        const bottomMask = bottomProgress * 35; // 0% → 35% de máscara inferior
+
+        beachImg.style.clipPath = `inset(${reveal}% 0 ${bottomMask}% 0)`;
 
         ticking = false;
       }
