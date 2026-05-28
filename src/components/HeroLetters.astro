@@ -75,9 +75,12 @@
     const pl = document.getElementById('page-letters');
     const ltrs = document.querySelectorAll('#page-letters .ll');
 
+    // ─── Phone detection: táctil, sin hover, pantalla pequeña ───
+    const isPhone = window.matchMedia('(hover: none) and (pointer: coarse) and (max-width: 767px)').matches;
+
     let letterData = null; // { initGap, initFontSize }
     const SCROLL_RANGE = window.innerHeight * 0.70;
-    const FONT_END = 74;
+    const FONT_END = isPhone ? 40 : 74;
     const LS_START = -0.01;
     const LS_END = 0.02;
     let scrollTicking = false;
@@ -154,7 +157,7 @@
       // Target: top-left of viewport (aligns with top-left of beach image on scroll)
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const PAD_TOP = 10; // top padding
+      const PAD_TOP = isPhone ? 30 : 10; // top padding
 
       // Final cluster dimensions at FONT_END + LS_END (glyph + letter-spacing)
       const charGlyphWidth = FONT_END * 0.7;

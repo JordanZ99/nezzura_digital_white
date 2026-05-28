@@ -14,25 +14,14 @@
     z-index: 1;
   }
 
-  #vimeo-wrap iframe {
+  #vimeo-wrap video {
     position: absolute;
-    top: 50%;
-    left: 50%;
-    width: 120vh;
-    height: 120vw;
-    transform: translate(calc(-50% - 130px), -50%) rotate(270deg);
-    border: none;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
     pointer-events: none;
-  }
-
-  @media (max-width: 767px) {
-    #vimeo-wrap iframe {
-      width: 100vw;
-      height: 56.25vw;
-      min-height: 100vh;
-      min-width: 177.78vh;
-      transform: translate(-50%, -50%);
-    }
   }
 </style>
 
