@@ -1,0 +1,281 @@
+---
+---
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nezzura</title>
+  <style>
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+      overflow-y: auto;
+      background: #ffffff;
+    }
+
+    /* ─── HERO ─── blanco con video encima */
+    #hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      background: #ffffff;
+      overflow: visible;
+    }
+
+    #vimeo-wrap {
+      position: absolute;
+      inset: 0;
+      overflow: visible;
+      z-index: 1;
+    }
+
+    /* ─── Desktop: video rotado 90° ─── */
+    #vimeo-wrap iframe {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 120vh;
+      height: 120vw;
+      transform: translate(calc(-50% - 130px), -50%) rotate(270deg);
+      border: none;
+      pointer-events: none;
+    }
+
+    /* ─── Mobile: video sin rotar, vertical ─── */
+    @media (max-width: 767px) {
+      #vimeo-wrap iframe {
+        width: 100vw;
+        height: 56.25vw;
+        min-height: 100vh;
+        min-width: 177.78vh;
+        transform: translate(-50%, -50%);
+      }
+    }
+
+    /* ─── LETTERS (independientes, sobre el loader y el hero) ─── */
+    #page-letters {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0 35px;
+      pointer-events: none;
+    }
+
+    #page-letters .ll {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-weight: 100;
+      font-size: clamp(72px, 13vw, 210px);
+      letter-spacing: -0.01em;
+      color: #080808;
+    }
+
+    /* ─── LOADER ─── */
+    #loader {
+      position: fixed;
+      inset: 0;
+      background: #ffffff;
+      z-index: 9000;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    #loader-bar {
+      position: absolute;
+      top: 0; left: 0;
+      height: 1.5px;
+      background: #080808;
+      width: 0%;
+    }
+
+    .ll {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-weight: 100;
+      font-size: clamp(72px, 13vw, 210px);
+      letter-spacing: -0.01em;
+      color: #080808;
+    }
+
+    .ll.slide {
+      transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    #loader.leaving {
+      animation: loaderUp 0.75s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+    }
+
+    @keyframes loaderUp {
+      to { transform: translateY(-100%); }
+    }
+
+    /* ─── BEACH SECTION ─── */
+    #beach {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+      background: #ffffff;
+      z-index: 2;
+    }
+
+    #beach img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      will-change: clip-path;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ─── LETTERS (independientes, sobre el loader y el hero) ─── -->
+  <div id="page-letters">
+    <span class="ll">N</span>
+    <span class="ll">E</span>
+    <span class="ll">Z</span>
+    <span class="ll">Z</span>
+    <span class="ll">U</span>
+    <span class="ll">R</span>
+    <span class="ll">A</span>
+  </div>
+
+  <!-- ─── LOADER (solo barra, sin letras) ─── -->
+  <div id="loader">
+    <div id="loader-bar"></div>
+  </div>
+
+  <!-- ─── HERO ─── -->
+  <section id="hero">
+    <div id="vimeo-wrap">
+      <iframe
+        src="https://player.vimeo.com/video/1145256182?background=1&autoplay=1&loop=1&muted=1&playsinline=1&dnt=1"
+        allow="autoplay; fullscreen"
+        title="Nezzura background video"
+      ></iframe>
+    </div>
+  </section>
+
+  <!-- ─── BEACH SECTION ─── -->
+  <section id="beach">
+    <img src="/beachBackground.jpg" alt="Beach background" />
+  </section>
+
+  <script>
+    const loader      = document.getElementById('loader');
+    const loaderBar   = document.getElementById('loader-bar');
+    const letters     = document.querySelectorAll('.ll');
+
+    let progress = 0;
+    const barInterval = setInterval(() => {
+      progress += Math.random() * 3.5 + 0.5;
+      if (progress >= 100) { progress = 100; clearInterval(barInterval); }
+      if (loaderBar) loaderBar.style.width = progress + '%';
+    }, 35);
+
+    // Animar letras: todas parten fuera de la página (izquierda) y se deslizan a su lugar
+    // Orden inverso: A primero, N último
+    requestAnimationFrame(() => {
+      const vw = window.innerWidth;
+
+      letters.forEach((el, i) => {
+        const finalLeft = el.getBoundingClientRect().left;
+
+        // Colocar cada letra 100vw a la izquierda de su posición natural (fuera de pantalla)
+        el.style.transform = `translateX(${-vw - finalLeft}px)`;
+
+        // Forzar reflow
+        void el.offsetWidth;
+
+        // Orden inverso: A (índice 6) primero, N (índice 0) último
+        const reversedIndex = letters.length - 1 - i;
+        setTimeout(() => {
+          el.classList.add('slide');
+          el.style.transform = 'translateX(0)';
+        }, 180 + reversedIndex * 105);
+      });
+    });
+
+    // Última letra en animar (N) empieza en 180 + 6*105 = 810ms, termina 850ms después = 1660ms
+    const lastStart = 180 + (letters.length - 1) * 105;
+    const exitAt = lastStart + 850 + 150;
+
+    setTimeout(() => {
+      if (loader) loader.classList.add('leaving');
+      setTimeout(() => {
+        if (loader) loader.style.display = 'none';
+      }, 750);
+    }, exitAt);
+
+    // ─── SCROLL-DRIVEN MASK REVEAL (beach section) ───
+    const beachSection = document.getElementById('beach');
+    const beachImg = document.querySelector('#beach img');
+
+    if (beachSection && beachImg) {
+      // Inicialmente oculta
+      beachImg.style.clipPath = 'inset(100% 0 0 0)';
+
+      let ticking = false;
+
+      function updateReveal() {
+        const rect = beachSection.getBoundingClientRect();
+        const wh = window.innerHeight;
+
+        // La sección ocupa toda la ventana (100vh), así que:
+        // - Cuando rect.top = wh (top de sección en bottom de viewport): empieza a revelar
+        // - Cuando rect.top = 0 (top de sección en top de viewport): completamente revelada
+        const start = wh * 2;
+        const end = 0;
+        const total = start - end;
+        const scrolled = start - rect.top;
+        let progress = Math.max(0.6, Math.min(1, scrolled / total));
+
+        // De 0% a 100% de clip desde arriba
+        const reveal = 100 - (progress * 100);
+        beachImg.style.clipPath = `inset(${reveal}% 0 0 0)`;
+
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateReveal);
+          ticking = true;
+        }
+      });
+
+      // También actualizar al cargar por si ya está en vista
+      updateReveal();
+    }
+  </script>
+
+</body>
+</html>
+
+---
+---
+
+<style>
+  /* Puedes conservar los estilos que ya tengas del Loader y las letras, y abajo agregas esto: */
+
+  #beach {
+    position: relative;
+    width: 100%;
+    height: 100vh;      /* Altura extra para compensar el solapamiento */
+    margin-top: -30vh;   Empuja la sección un 30% encima del Hero
+    overflow: hidden;
+    background: transparent;
+    z-index: 2;         /* Obliga a la playa a pasar por encima del video del Hero */
+  }
+</style>
