@@ -80,7 +80,8 @@
 
     let letterData = null; // { initGap, initFontSize }
     const SCROLL_RANGE = window.innerHeight * 0.70;
-    const FONT_END = isPhone ? 40 : 74;
+    // En móvil: tamaño responsivo al viewport, máximo 8% del ancho (cap 32px)
+    const FONT_END = isPhone ? Math.min(32, window.innerWidth * 0.08) : 74;
     const LS_START = -0.01;
     const LS_END = 0.02;
     let scrollTicking = false;
