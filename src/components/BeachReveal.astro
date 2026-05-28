@@ -90,6 +90,7 @@
     width: 50%;
     height: 100%;
     display: flex;
+    flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
     box-sizing: border-box;
@@ -105,6 +106,19 @@
     color: #080808;
     margin: 0;
     padding: clamp(20px, 3vh, 40px) 0 0 clamp(20px, 2vw, 40px);
+    box-sizing: border-box;
+    white-space: pre-line;
+  }
+
+  #mission .mission-cta {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 448;
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.6;
+    text-transform: uppercase;
+    color: #888888;
+    margin: 20px 0 0 0;
+    padding: 0 0 0 clamp(20px, 2vw, 40px);
     box-sizing: border-box;
     white-space: pre-line;
   }
@@ -143,6 +157,10 @@
       max-width: 100%;
       font-size: clamp(15px, 3.5vw, 20px);
       padding: 20px 25px 0 25px;
+    }
+    #mission .mission-cta {
+      font-size: clamp(13px, 3.5vw, 18px);
+      padding: 0 25px 0 25px;
     }
     #mission .mission-right {
       width: 100%;
@@ -189,6 +207,7 @@ AHORA NECESITA EXISTIR EN INTERNET.</p>
 <section id="mission">
   <div class="mission-left">
     <p class="mission-text">EN NEZZURA NO HACEMOS PÁGINAS, CONSTRUIMOS LA IMAGEN DIGITAL QUE TU MARCA SE MERECE. CADA DETALLE ESTÁ PENSADO PARA QUE QUIEN TE ENCUENTRE EN INTERNET VEA EXACTAMENTE LO QUE ERES: UN NEGOCIO PROFESIONAL, SERIO Y LISTO PARA CRECER.</p>
+    <p class="mission-cta">IMPULSA TU NEGOCIO</p>
   </div>
   <div class="mission-right">
     <img src="/restaurant.jpg" alt="Restaurant" class="mission-image" />
