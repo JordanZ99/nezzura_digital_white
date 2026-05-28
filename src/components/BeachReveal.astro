@@ -39,9 +39,9 @@
     top: 0;
     left: 50px;
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 560;
-    font-size: clamp(48px, 7vw, 88px);
-    letter-spacing: -0.01em;
+    font-weight: 448;
+    font-size: clamp(48px, 5vw, 88px);
+    letter-spacing: 0.05em;
     color: #080808;
     margin: 0;
   }
@@ -51,11 +51,29 @@
     top: 0;
     right: 50px;
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 560;
-    font-size: clamp(48px, 7vw, 88px);
-    letter-spacing: 0.12em;
+    font-weight: 448;
+    font-size: clamp(48px, 5vw, 88px);
+    letter-spacing: 0.05em;
     color: #080808;
     margin: 0;
+  }
+
+  #white-titles .description {
+    position: absolute;
+    top: 75%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 448;
+    font-size: clamp(16px, 2vw, 22px);
+    line-height: 1.6;
+    text-transform: uppercase;
+    text-align: center;
+    color: #888888;
+    margin: 0;
+    width: 80%;
+    max-width: 460px;
+    white-space: pre-line;
   }
 
   @media (max-width: 600px) {
@@ -69,6 +87,14 @@
       right: 25px;
       font-size: clamp(32px, 8vw, 48px);
     }
+    #white-titles .description {
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 90%;
+      max-width: 340px;
+      font-size: clamp(13px, 3.5vw, 18px);
+    }
   }
 </style>
 
@@ -78,8 +104,10 @@
 
 <section id="beach-white">
   <div id="white-titles">
-    <p class="left-title">TU NEGOCIO</p>
-    <p class="right-title">DIGITALIZADO</p>
+    <p class="left-title">DIGITALIZA</p>
+    <p class="right-title">TU NEGOCIO</p>
+    <p class="description">TU NEGOCIO EXISTE.
+AHORA NECESITA EXISTIR EN INTERNET.</p>
   </div>
 </section>
 
