@@ -77,7 +77,7 @@
 
     let letterData = null; // { initGap, initFontSize }
     const SCROLL_RANGE = window.innerHeight * 1.0;
-    const FONT_END = 13;
+    const FONT_END = 26;
     const LS_START = -0.01;
     const LS_END = 0.22;
     let scrollTicking = false;
@@ -150,11 +150,25 @@
       const ls = LS_START + (LS_END - LS_START) * e;
       const gap = initGap * (1 - e);
       const fw = 100 + 100 * e;
-      const vh = window.innerHeight;
-      const topOffset = Math.max(12, vh * 0.03);
-      const moveUp = (vh / 2 - topOffset) * e;
 
-      pl.style.transform = `translateY(${-moveUp}px)`;
+      // Target: top-left of viewport (aligns with top-left of beach image on scroll)
+      const vw = window.innerWidth;
+      const vh = window.innerHeight;
+      const PAD_TOP = 25; // top padding
+
+      // Final cluster dimensions at FONT_END + LS_END (glyph + letter-spacing)
+      const charGlyphWidth = FONT_END * 0.7;
+      const gapWidth = FONT_END * LS_END; // inter-letter space in px
+      const finalClusterWidth = ltrs.length * charGlyphWidth + (ltrs.length - 1) * gapWidth;
+      const finalClusterHeight = FONT_END;
+
+      // Target: center of cluster at the first-third horizontal mark (vw/3)
+      const PAD_LEFT = Math.max(20, vw / 3 - finalClusterWidth / 2);
+      // Translate from viewport center → first-third with padding
+      const finalTx = PAD_LEFT + finalClusterWidth / 2 - vw / 2;
+      const finalTy = PAD_TOP + finalClusterHeight / 2 - vh / 2;
+
+      pl.style.transform = `translate(${finalTx * e}px, ${finalTy * e}px)`;
       pl.style.gap = gap + 'px';
 
       ltrs.forEach((el) => {
