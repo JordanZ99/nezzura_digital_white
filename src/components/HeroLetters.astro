@@ -1,0 +1,190 @@
+<style>
+  #page-letters {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 35px;
+    pointer-events: none;
+    will-change: transform;
+  }
+
+  #page-letters .ll {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 100;
+    font-size: clamp(72px, 13vw, 210px);
+    letter-spacing: -0.01em;
+    color: #080808;
+    will-change: font-size, letter-spacing, font-weight;
+    line-height: 1;
+  }
+
+  .ll.slide {
+    transition: transform 0.85s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+</style>
+
+<div id="page-letters">
+  <span class="ll">N</span>
+  <span class="ll">E</span>
+  <span class="ll">Z</span>
+  <span class="ll">Z</span>
+  <span class="ll">U</span>
+  <span class="ll">R</span>
+  <span class="ll">A</span>
+</div>
+
+<script>
+  // ─── SLIDE-IN ANIMATION ───
+  (function () {
+    const ltrs = document.querySelectorAll('#page-letters .ll');
+
+    requestAnimationFrame(() => {
+      const vw = window.innerWidth;
+
+      ltrs.forEach((el, i) => {
+        const finalLeft = el.getBoundingClientRect().left;
+
+        el.style.transform = `translateX(${-vw - finalLeft}px)`;
+        void el.offsetWidth;
+
+        const reversedIndex = ltrs.length - 1 - i;
+        setTimeout(() => {
+          el.classList.add('slide');
+          el.style.transform = 'translateX(0)';
+        }, 180 + reversedIndex * 105);
+      });
+    });
+
+    // Clean up slide class & inline transforms after everything settles
+    const lastStart = 180 + (ltrs.length - 1) * 105;
+    const doneAt = lastStart + 850 + 150 + 750;
+
+    setTimeout(() => {
+      ltrs.forEach((el) => {
+        el.classList.remove('slide');
+        el.style.transform = '';
+      });
+    }, doneAt);
+  })();
+
+  // ─── SCROLL-DRIVEN LETTERS → COMPACT LOGO ───
+  (function () {
+    const pl = document.getElementById('page-letters');
+    const ltrs = document.querySelectorAll('#page-letters .ll');
+
+    let letterData = null; // { initGap, initFontSize }
+    const SCROLL_RANGE = window.innerHeight * 1.0;
+    const FONT_END = 13;
+    const LS_START = -0.01;
+    const LS_END = 0.22;
+    let scrollTicking = false;
+    let layoutSwitched = false;
+
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function measureLetters() {
+      const cs = getComputedStyle(ltrs[0]);
+      const initFs = parseFloat(cs.fontSize) || Math.min(210, window.innerWidth * 0.13);
+
+      let totalW = 0;
+      ltrs.forEach((el) => (totalW += el.offsetWidth));
+
+      const targetSpan = window.innerWidth - 70;
+      const gapCount = ltrs.length - 1;
+      const gap = Math.max(0, (targetSpan - totalW) / gapCount);
+
+      letterData = { initGap: gap, initFontSize: initFs };
+    }
+
+    setTimeout(measureLetters, 2200);
+
+    function switchLayoutToCenter() {
+      if (layoutSwitched || !letterData) return;
+      layoutSwitched = true;
+
+      const { initGap } = letterData;
+      pl.style.gap = initGap + 'px';
+      pl.style.justifyContent = 'center';
+      pl.style.padding = '0';
+    }
+
+    function updateLetterAnimation() {
+      const sy = window.scrollY;
+      const p = Math.min(1, Math.max(0, sy / SCROLL_RANGE));
+
+      if (p > 0.005 && !layoutSwitched && letterData) {
+        switchLayoutToCenter();
+      }
+
+      if (p < 0.005) {
+        pl.style.transform = '';
+        if (layoutSwitched) {
+          layoutSwitched = false;
+          pl.style.justifyContent = 'space-between';
+          pl.style.padding = '0 35px';
+          pl.style.gap = '';
+        }
+        ltrs.forEach((el) => {
+          el.style.fontSize = '';
+          el.style.letterSpacing = '';
+          el.style.fontWeight = '';
+        });
+        scrollTicking = false;
+        return;
+      }
+
+      if (!letterData) {
+        scrollTicking = false;
+        return;
+      }
+
+      const e = easeOutCubic(p);
+      const { initGap, initFontSize } = letterData;
+
+      const curFs = initFontSize - (initFontSize - FONT_END) * e;
+      const ls = LS_START + (LS_END - LS_START) * e;
+      const gap = initGap * (1 - e);
+      const fw = 100 + 100 * e;
+      const vh = window.innerHeight;
+      const topOffset = Math.max(12, vh * 0.03);
+      const moveUp = (vh / 2 - topOffset) * e;
+
+      pl.style.transform = `translateY(${-moveUp}px)`;
+      pl.style.gap = gap + 'px';
+
+      ltrs.forEach((el) => {
+        el.style.fontSize = curFs + 'px';
+        el.style.letterSpacing = ls + 'em';
+        el.style.fontWeight = fw;
+      });
+
+      scrollTicking = false;
+    }
+
+    // ─── Resize: recalculate gap while in hero state ───
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+      clearTimeout(resizeTimer);
+      resizeTimer = setTimeout(() => {
+        if (!layoutSwitched && !letterData) return;
+        if (!layoutSwitched && letterData) measureLetters();
+      }, 300);
+    });
+
+    window.addEventListener(
+      'scroll',
+      () => {
+        if (!scrollTicking) {
+          requestAnimationFrame(updateLetterAnimation);
+          scrollTicking = true;
+        }
+      },
+      { passive: true }
+    );
+  })();
+</script>

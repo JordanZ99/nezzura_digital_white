@@ -1,0 +1,64 @@
+<style>
+  #loader {
+    position: fixed;
+    inset: 0;
+    background: #ffffff;
+    z-index: 9000;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+  }
+
+  #loader-bar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    height: 1.5px;
+    background: #080808;
+    width: 0%;
+  }
+
+  #loader.leaving {
+    animation: loaderUp 0.75s cubic-bezier(0.76, 0, 0.24, 1) forwards;
+  }
+
+  @keyframes loaderUp {
+    to {
+      transform: translateY(-100%);
+    }
+  }
+</style>
+
+<div id="loader">
+  <div id="loader-bar"></div>
+</div>
+
+<script>
+  (function () {
+    const loader = document.getElementById('loader');
+    const loaderBar = document.getElementById('loader-bar');
+
+    // ─── Progress bar ───
+    let progress = 0;
+    const barInterval = setInterval(() => {
+      progress += Math.random() * 3.5 + 0.5;
+      if (progress >= 100) {
+        progress = 100;
+        clearInterval(barInterval);
+      }
+      if (loaderBar) loaderBar.style.width = progress + '%';
+    }, 35);
+
+    // ─── Leave after letters finish sliding in ───
+    const letterCount = document.querySelectorAll('.ll').length || 7;
+    const lastStart = 180 + (letterCount - 1) * 105;
+    const exitAt = lastStart + 850 + 150;
+
+    setTimeout(() => {
+      if (loader) loader.classList.add('leaving');
+      setTimeout(() => {
+        if (loader) loader.style.display = 'none';
+      }, 750);
+    }, exitAt);
+  })();
+</script>

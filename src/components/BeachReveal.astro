@@ -1,0 +1,61 @@
+<style>
+  #beach {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    margin-top: -30vh;
+    overflow: hidden;
+    background: transparent;
+    z-index: 2;
+  }
+
+  #beach img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    will-change: clip-path;
+  }
+</style>
+
+<section id="beach">
+  <img src="/beachBackground.jpg" alt="Beach background" />
+</section>
+
+<script>
+  (function () {
+    const beachSection = document.getElementById('beach');
+    const beachImg = document.querySelector('#beach img');
+
+    if (beachSection && beachImg) {
+      beachImg.style.clipPath = 'inset(100% 0 0 0)';
+
+      let ticking = false;
+
+      function updateReveal() {
+        const rect = beachSection.getBoundingClientRect();
+        const wh = window.innerHeight;
+
+        const start = wh * 2;
+        const end = 0;
+        const total = start - end;
+        const scrolled = start - rect.top;
+        let progress = Math.max(0.6, Math.min(1, scrolled / total));
+
+        const reveal = 100 - progress * 100;
+        beachImg.style.clipPath = `inset(${reveal}% 0 0 0)`;
+
+        ticking = false;
+      }
+
+      window.addEventListener('scroll', () => {
+        if (!ticking) {
+          requestAnimationFrame(updateReveal);
+          ticking = true;
+        }
+      });
+
+      updateReveal();
+    }
+  })();
+</script>
