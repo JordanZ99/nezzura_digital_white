@@ -16,9 +16,14 @@
 
     html, body {
       width: 100%;
-      min-height: 100%;
-      overflow-x: hidden;
-      overflow-y: auto;
+      /* 1. Cambiamos min-height por height para heredar correctamente la altura de la página */
+      height: 100%; 
+      
+      /* 2. Dejamos solo el clip horizontal para las letras gigantes */
+      overflow-x: clip; 
+      
+      /* ❌ ELIMINADO: overflow-y: auto; (Esto causaba que no se quedara pinneado) */
+      
       background: #ffffff;
     }
   </style>

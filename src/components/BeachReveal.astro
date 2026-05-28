@@ -21,7 +21,7 @@
   #beach-white {
     position: relative;
     width: 100%;
-    height: 30vh;
+    height: 40vh;
     background: #ffffff;
     box-sizing: border-box;
   }
@@ -60,12 +60,12 @@
 
   #white-titles .description {
     position: absolute;
-    top: 95%;
+    top: 115%;
     left: 50%;
     transform: translate(-50%, -50%);
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 448;
-    font-size: clamp(16px, 2vw, 22px);
+    font-weight: 500;
+    font-size: clamp(16px, 1vw, 22px);
     line-height: 1.6;
     text-transform: uppercase;
     text-align: center;
@@ -76,17 +76,26 @@
     white-space: pre-line;
   }
 
-  /* ─── Sección de valor / misión ─── */
-  #mission {
+  /* ─── Sección creativa con scroll pinning + image reveal ─── */
+  #creative-section {
+    position: relative;
     width: 100%;
-    height: 100vh;
+    min-height: 200vh;
     background: #ffffff;
+    box-sizing: border-box;
+    z-index: 3;
+  }
+
+  #creative-section .creative-sticky {
+    position: sticky;
+    top: 0;
+    height: 95vh;
+    overflow: hidden;
     display: flex;
-    padding: 0;
     box-sizing: border-box;
   }
 
-  #mission .mission-left {
+  #creative-section .creative-left {
     width: 50%;
     height: 100%;
     display: flex;
@@ -94,11 +103,12 @@
     align-items: flex-start;
     justify-content: flex-start;
     box-sizing: border-box;
+    padding-top: 8vh;
   }
 
-  #mission .mission-text {
+  #creative-section .creative-text {
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 400;
+    font-weight: 500;
     font-size: clamp(18px, 2.2vw, 26px);
     letter-spacing: 0.01em;
     line-height: 1.2;
@@ -110,20 +120,20 @@
     white-space: pre-line;
   }
 
-  #mission .mission-cta {
+  #creative-section .creative-cta {
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 448;
-    font-size: clamp(16px, 2vw, 22px);
-    line-height: 1.6;
+    font-weight: 500;
+    font-size: clamp(16px, 1vw, 22px);
+    line-height: 1.2;
     text-transform: uppercase;
     color: #888888;
-    margin: 20px 0 0 0;
+    margin: 190px 0 0 0;
     padding: 0 0 0 clamp(20px, 2vw, 40px);
     box-sizing: border-box;
     white-space: pre-line;
   }
 
-  #mission .mission-right {
+  #creative-section .creative-right {
     width: 50%;
     height: 100%;
     display: flex;
@@ -131,41 +141,56 @@
     justify-content: center;
     padding: 20px;
     box-sizing: border-box;
+    padding-top: 12vh;
   }
 
-  #mission .mission-image {
+  #creative-section .image-stack {
+    position: relative;
     width: 100%;
     height: 100%;
-    object-fit: cover;
     border-radius: 24px;
-    display: block;
+    overflow: hidden;
     box-shadow: 0 4px 24px rgba(0,0,0,0.08);
   }
 
+  #creative-section .image-stack img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  #creative-section .image-reveal {
+    will-change: clip-path;
+    clip-path: inset(100% 0 0 0);
+  }
+
   @media (max-width: 768px) {
-    #mission {
+    #creative-section .creative-sticky {
       flex-direction: column;
-      height: auto;
-      min-height: 100vh;
     }
-    #mission .mission-left {
+    #creative-section .creative-left {
       width: 100%;
-      height: auto;
+      height: 50%;
       padding: 0;
+      justify-content: center;
     }
-    #mission .mission-text {
+    #creative-section .creative-text {
       max-width: 100%;
       font-size: clamp(15px, 3.5vw, 20px);
       padding: 20px 25px 0 25px;
     }
-    #mission .mission-cta {
+    #creative-section .creative-cta {
       font-size: clamp(13px, 3.5vw, 18px);
       padding: 0 25px 0 25px;
     }
-    #mission .mission-right {
+    #creative-section .creative-right {
       width: 100%;
-      height: 50vh;
-      padding: 20px;
+      height: 50%;
+      padding: 8px;
     }
   }
 
@@ -199,18 +224,29 @@
   <div id="white-titles">
     <p class="left-title">DIGITALIZA</p>
     <p class="right-title">TU NEGOCIO</p>
-    <p class="description">TU NEGOCIO EXISTE.
-AHORA NECESITA EXISTIR EN INTERNET.</p>
+    <p class="description">78% de los negocios en México pierde clientes
+por no tener presencia digital profesional.</p>
   </div>
 </section>
 
-<section id="mission">
-  <div class="mission-left">
-    <p class="mission-text">EN NEZZURA NO HACEMOS PÁGINAS, CONSTRUIMOS LA IMAGEN DIGITAL QUE TU MARCA SE MERECE. CADA DETALLE ESTÁ PENSADO PARA QUE QUIEN TE ENCUENTRE EN INTERNET VEA EXACTAMENTE LO QUE ERES: UN NEGOCIO PROFESIONAL, SERIO Y LISTO PARA CRECER.</p>
-    <p class="mission-cta">IMPULSA TU NEGOCIO</p>
-  </div>
-  <div class="mission-right">
-    <img src="/restaurant.jpg" alt="Restaurant" class="mission-image" />
+<section id="creative-section">
+  <div class="creative-sticky">
+    <div class="creative-left">
+      <p class="creative-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ESTRUCTURAS EFICIENTES, DISEÑOS PREMIUM.
+      EN NEZZURA CONSTRUIMOS LA IMAGEN DIGITAL 
+      QUE TU MARCA SE MERECE. 
+      CADA DETALLE ESTÁ PENSADO 
+      PARA QUE QUIEN TE ENCUENTRE EN INTERNET
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VEA EXACTAMENTE LO QUE ERES:
+      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UN NEGOCIO PROFESIONAL.</p>
+      <p class="creative-cta">Tu negocio existe.<br>Ahora necesita existir en internet.</p>
+    </div>
+    <div class="creative-right">
+      <div class="image-stack">
+        <img src="/laptop1.jpg" alt="Building exterior" class="image-base" />
+        <img src="/laptop2.jpg" alt="Interior" class="image-reveal" />
+      </div>
+    </div>
   </div>
 </section>
 
@@ -267,5 +303,50 @@ AHORA NECESITA EXISTIR EN INTERNET.</p>
 
       updateReveal();
     }
+  })();
+</script>
+
+<script>
+  (function () {
+    const section = document.getElementById('creative-section');
+    const revealImage = section?.querySelector('.image-reveal');
+    if (!section || !revealImage) return;
+
+    let ticking = false;
+
+    function updateCreativeReveal() {
+      const rect = section.getBoundingClientRect();
+      const sh = section.offsetHeight;
+      const vh = window.innerHeight;
+      const scrollable = sh - vh;
+      if (scrollable <= 0) {
+        ticking = false;
+        return;
+      }
+
+      // Calculamos el progreso SOLAMENTE cuando la sección ya se pegó al techo (rect.top <= 0)
+      let progress = 0;
+      if (rect.top < 0) {
+        progress = Math.max(0, Math.min(1, (-rect.top) / scrollable));
+      } else if (rect.top > 0) {
+        progress = 0; // Se mantiene en la primera imagen si no ha llegado al pin
+      }
+
+      // Revelar de abajo hacia arriba de forma ultra fluida
+      const revealInset = (1 - progress) * 100;
+      revealImage.style.clipPath = `inset(${revealInset}% 0 0 0)`;
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateCreativeReveal);
+        ticking = true;
+      }
+    });
+
+    // Inicializar
+    updateCreativeReveal();
   })();
 </script>

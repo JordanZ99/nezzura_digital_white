@@ -13,7 +13,7 @@
 
   #page-letters .ll {
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 100;
+    font-weight: 400;
     font-size: clamp(72px, 13vw, 210px);
     letter-spacing: -0.01em;
     color: #080808;
@@ -76,10 +76,10 @@
     const ltrs = document.querySelectorAll('#page-letters .ll');
 
     let letterData = null; // { initGap, initFontSize }
-    const SCROLL_RANGE = window.innerHeight * 1.0;
-    const FONT_END = 26;
+    const SCROLL_RANGE = window.innerHeight * 0.70;
+    const FONT_END = 74;
     const LS_START = -0.01;
-    const LS_END = 0.22;
+    const LS_END = 0.02;
     let scrollTicking = false;
     let layoutSwitched = false;
 
@@ -149,12 +149,12 @@
       const curFs = initFontSize - (initFontSize - FONT_END) * e;
       const ls = LS_START + (LS_END - LS_START) * e;
       const gap = initGap * (1 - e);
-      const fw = 100 + 100 * e;
+      const fw = 400 + 0 * e;
 
       // Target: top-left of viewport (aligns with top-left of beach image on scroll)
       const vw = window.innerWidth;
       const vh = window.innerHeight;
-      const PAD_TOP = 25; // top padding
+      const PAD_TOP = 10; // top padding
 
       // Final cluster dimensions at FONT_END + LS_END (glyph + letter-spacing)
       const charGlyphWidth = FONT_END * 0.7;
@@ -165,7 +165,7 @@
       // Target: center of cluster at the first-third horizontal mark (vw/3)
       const PAD_LEFT = Math.max(20, vw / 3 - finalClusterWidth / 2);
       // Translate from viewport center → first-third with padding
-      const finalTx = PAD_LEFT + finalClusterWidth / 2 - vw / 2;
+      const finalTx = PAD_LEFT + finalClusterWidth / 3 - vw / 2;
       const finalTy = PAD_TOP + finalClusterHeight / 2 - vh / 2;
 
       // ─── Normal animation: hero → compact ───
