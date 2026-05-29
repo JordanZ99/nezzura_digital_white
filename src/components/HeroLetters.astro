@@ -79,7 +79,14 @@
     const isPhone = window.matchMedia('(hover: none) and (pointer: coarse) and (max-width: 767px)').matches;
 
     let letterData = null; // { initGap, initFontSize }
-    const SCROLL_RANGE = window.innerHeight * 0.70;
+
+    // SCROLL_RANGE basado en la posición real de #beach en el documento
+    // para que la animación esté sincronizada con el reveal de la playa
+    const beachSection = document.getElementById('beach');
+    const beachTop = beachSection
+      ? (window.scrollY + beachSection.getBoundingClientRect().top)
+      : window.innerHeight * 0.70;
+    const SCROLL_RANGE = Math.max(100, beachTop || window.innerHeight * 0.70);
     // En móvil: tamaño responsivo al viewport, máximo 8% del ancho (cap 32px)
     const FONT_END = isPhone ? Math.min(32, window.innerWidth * 0.08) : 74;
     const LS_START = -0.01;

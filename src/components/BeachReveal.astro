@@ -2,8 +2,8 @@
   #beach {
     position: relative;
     width: 100%;
-    height: 100dvh;
-    margin-top: -30dvh;
+    height: 100vh;
+    margin-top: -30vh;
     overflow: hidden;
     background: transparent;
     z-index: 2;
@@ -21,7 +21,7 @@
   #beach-white {
     position: relative;
     width: 100%;
-    height: 40dvh;
+    height: 40vh;
     background: #ffffff;
     box-sizing: border-box;
   }
@@ -80,7 +80,7 @@
   #creative-section {
     position: relative;
     width: 100%;
-    min-height: 200dvh;
+    min-height: 200vh;
     background: #ffffff;
     box-sizing: border-box;
     z-index: 3;
@@ -89,7 +89,7 @@
   #creative-section .creative-sticky {
     position: sticky;
     top: 0;
-    height: 95dvh;
+    height: 95vh;
     overflow: hidden;
     display: flex;
     box-sizing: border-box;
@@ -103,7 +103,7 @@
     align-items: flex-start;
     justify-content: flex-start;
     box-sizing: border-box;
-    padding-top: 8dvh;
+    padding-top: 8vh;
   }
 
   #creative-section .creative-text {
@@ -115,7 +115,7 @@
     text-transform: uppercase;
     color: #080808;
     margin: 0;
-    padding: clamp(20px, 3dvh, 40px) 0 0 clamp(20px, 2vw, 40px);
+    padding: clamp(20px, 3vh, 40px) 0 0 clamp(20px, 2vw, 40px);
     box-sizing: border-box;
     white-space: pre-line;
   }
@@ -141,7 +141,7 @@
     justify-content: center;
     padding: 20px;
     box-sizing: border-box;
-    padding-top: 12dvh;
+    padding-top: 12vh;
   }
 
   #creative-section .image-stack {
@@ -169,9 +169,6 @@
   }
 
   @media (max-width: 768px) {
-    #beach {
-      margin-top: -15dvh; /* Reducimos el margen negativo drástico en móviles */
-    }
     #creative-section .creative-sticky {
       flex-direction: column;
     }
@@ -253,16 +250,20 @@
     const beachImg = document.querySelector('#beach img');
 
     if (beachSection && beachImg) {
-      // Fijamos la altura base al cargar para evitar el redimensionamiento dinámico del layout móvil
-      const wh = document.documentElement.clientHeight || window.innerHeight;
+      let wh = window.innerHeight;
       beachImg.style.clipPath = 'inset(100% 0 0 0)';
+
+      // Recalcular en resize/orientation para adaptarse a cambios de viewport
+      window.addEventListener('resize', () => {
+        wh = window.innerHeight;
+      });
 
       let ticking = false;
 
       function updateReveal() {
         const rect = beachSection.getBoundingClientRect();
 
-        // Top reveal matemático estable
+        // Top reveal: la imagen se destapa de arriba hacia abajo
         const start = wh * 2;
         const end = 0;
         const total = start - end;
@@ -271,18 +272,18 @@
 
         const reveal = 100 - progress * 100;
 
-        // Bottom mask estable para móviles
+        // Bottom mask: se va tapando la parte inferior al salir del viewport
         const beachBottom = rect.bottom;
-        const fadeStart = wh;            
-        const fadeEnd = wh * 0.3;          
+        const fadeStart = wh;
+        const fadeEnd = wh * 0.3;
         const bottomProgress = Math.max(0, Math.min(1, (fadeStart - beachBottom) / (fadeStart - fadeEnd)));
-        const bottomMask = bottomProgress * 35; 
+        const bottomMask = bottomProgress * 35;
 
         beachImg.style.clipPath = `inset(${reveal}% 0 ${bottomMask}% 0)`;
 
         const titles = document.getElementById('white-titles');
         if (titles) {
-          const translateUp = bottomProgress * 35; 
+          const translateUp = bottomProgress * 35;
           titles.style.transform = `translateY(-${translateUp}vh)`;
         }
 
@@ -307,8 +308,12 @@
     const revealImage = section?.querySelector('.image-reveal');
     if (!section || !revealImage) return;
 
-    // Altura del cliente controlada para evitar saltos de barra de navegación
-    const vh = document.documentElement.clientHeight || window.innerHeight;
+    let vh = window.innerHeight;
+
+    window.addEventListener('resize', () => {
+      vh = window.innerHeight;
+    });
+
     let ticking = false;
 
     function updateCreativeReveal() {
