@@ -169,6 +169,9 @@
   }
 
   @media (max-width: 768px) {
+    #beach {
+      margin-top: -15dvh; /* Reducimos el margen negativo drástico en móviles */
+    }
     #creative-section .creative-sticky {
       flex-direction: column;
     }
@@ -186,6 +189,7 @@
     #creative-section .creative-cta {
       font-size: clamp(13px, 3.5vw, 18px);
       padding: 0 25px 0 25px;
+      margin: 20px 0 0 0;
     }
     #creative-section .creative-right {
       width: 100%;
@@ -196,22 +200,22 @@
 
   @media (max-width: 600px) {
     #white-titles .left-title {
-      top: 30px;
-      left: 25px;
-      font-size: clamp(32px, 8vw, 48px);
+      top: 10px;
+      left: 20px;
+      font-size: clamp(28px, 7vw, 42px);
     }
     #white-titles .right-title {
-      top: 30px;
-      right: 25px;
-      font-size: clamp(32px, 8vw, 48px);
+      top: 10px;
+      right: 20px;
+      font-size: clamp(28px, 7vw, 42px);
     }
     #white-titles .description {
-      top: 50%;
+      top: 60%;
       left: 50%;
       transform: translate(-50%, -50%);
       width: 90%;
       max-width: 340px;
-      font-size: clamp(13px, 3.5vw, 18px);
+      font-size: clamp(12px, 3.2vw, 16px);
     }
   }
 </style>
@@ -224,21 +228,14 @@
   <div id="white-titles">
     <p class="left-title">DIGITALIZA</p>
     <p class="right-title">TU NEGOCIO</p>
-    <p class="description">78% de los negocios en México pierde clientes
-por no tener presencia digital profesional.</p>
+    <p class="description">78% de los negocios en México pierde clientes por no tener presencia digital profesional.</p>
   </div>
 </section>
 
 <section id="creative-section">
   <div class="creative-sticky">
     <div class="creative-left">
-      <p class="creative-text">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;ESTRUCTURAS EFICIENTES, DISEÑOS PREMIUM.
-      EN NEZZURA CONSTRUIMOS LA IMAGEN DIGITAL 
-      QUE TU MARCA SE MERECE. 
-      CADA DETALLE ESTÁ PENSADO 
-      PARA QUE QUIEN TE ENCUENTRE EN INTERNET
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;VEA EXACTAMENTE LO QUE ERES:
-      &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;UN NEGOCIO PROFESIONAL.</p>
+      <p class="creative-text">ESTRUCTURAS EFICIENTES, DISEÑOS PREMIUM. EN NEZZURA CONSTRUIMOS LA IMAGEN DIGITAL QUE TU MARCA SE MERECE. CADA DETALLE ESTÁ PENSADO PARA QUE QUIEN TE ENCUENTRE EN INTERNET VEA EXACTAMENTE LO QUE ERES: UN NEGOCIO PROFESIONAL.</p>
       <p class="creative-cta">Tu negocio existe.<br>Ahora necesita existir en internet.</p>
     </div>
     <div class="creative-right">
@@ -256,15 +253,16 @@ por no tener presencia digital profesional.</p>
     const beachImg = document.querySelector('#beach img');
 
     if (beachSection && beachImg) {
+      // Fijamos la altura base al cargar para evitar el redimensionamiento dinámico del layout móvil
+      const wh = document.documentElement.clientHeight || window.innerHeight;
       beachImg.style.clipPath = 'inset(100% 0 0 0)';
 
       let ticking = false;
 
       function updateReveal() {
         const rect = beachSection.getBoundingClientRect();
-        const wh = window.innerHeight;
 
-        // ─── Top reveal (existente): imagen se descubre de arriba a abajo ───
+        // Top reveal matemático estable
         const start = wh * 2;
         const end = 0;
         const total = start - end;
@@ -273,22 +271,19 @@ por no tener presencia digital profesional.</p>
 
         const reveal = 100 - progress * 100;
 
-        // ─── Bottom mask (nuevo): la imagen se desvanece suavemente por abajo ───
-        // Se activa cuando la parte inferior de la playa supera el borde inferior del viewport
+        // Bottom mask estable para móviles
         const beachBottom = rect.bottom;
-        const fadeStart = wh;             // empieza cuando el borde inferior de la playa está al final del viewport
-        const fadeEnd = wh * 0.3;          // termina cuando está al 30% desde arriba
+        const fadeStart = wh;            
+        const fadeEnd = wh * 0.3;          
         const bottomProgress = Math.max(0, Math.min(1, (fadeStart - beachBottom) / (fadeStart - fadeEnd)));
-        const bottomMask = bottomProgress * 35; // 0% → 35% de máscara inferior
+        const bottomMask = bottomProgress * 35; 
 
         beachImg.style.clipPath = `inset(${reveal}% 0 ${bottomMask}% 0)`;
 
-        // ─── Títulos sincronizados con la máscara inferior ───
-        // Se mueven hacia arriba junto con el borde de la máscara
         const titles = document.getElementById('white-titles');
         if (titles) {
-          const translateUp = bottomProgress * 35; // 0 → 35vh
-          titles.style.transform = `translateY(-${translateUp}dvh)`;
+          const translateUp = bottomProgress * 35; 
+          titles.style.transform = `translateY(-${translateUp}vh)`;
         }
 
         ticking = false;
@@ -299,7 +294,7 @@ por no tener presencia digital profesional.</p>
           requestAnimationFrame(updateReveal);
           ticking = true;
         }
-      });
+      }, { passive: true });
 
       updateReveal();
     }
@@ -312,27 +307,24 @@ por no tener presencia digital profesional.</p>
     const revealImage = section?.querySelector('.image-reveal');
     if (!section || !revealImage) return;
 
+    // Altura del cliente controlada para evitar saltos de barra de navegación
+    const vh = document.documentElement.clientHeight || window.innerHeight;
     let ticking = false;
 
     function updateCreativeReveal() {
       const rect = section.getBoundingClientRect();
       const sh = section.offsetHeight;
-      const vh = window.innerHeight;
       const scrollable = sh - vh;
       if (scrollable <= 0) {
         ticking = false;
         return;
       }
 
-      // Calculamos el progreso SOLAMENTE cuando la sección ya se pegó al techo (rect.top <= 0)
       let progress = 0;
       if (rect.top < 0) {
         progress = Math.max(0, Math.min(1, (-rect.top) / scrollable));
-      } else if (rect.top > 0) {
-        progress = 0; // Se mantiene en la primera imagen si no ha llegado al pin
       }
 
-      // Revelar de abajo hacia arriba de forma ultra fluida
       const revealInset = (1 - progress) * 100;
       revealImage.style.clipPath = `inset(${revealInset}% 0 0 0)`;
 
@@ -344,9 +336,8 @@ por no tener presencia digital profesional.</p>
         requestAnimationFrame(updateCreativeReveal);
         ticking = true;
       }
-    });
+    }, { passive: true });
 
-    // Inicializar
     updateCreativeReveal();
   })();
 </script>
