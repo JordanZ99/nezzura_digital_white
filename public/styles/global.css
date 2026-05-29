@@ -213,7 +213,7 @@ body:hover #cursor-ring {
 #hero {
   position: relative;
   width: 100%;
-  height: 100vh;
+  height: 100dvh;
   overflow: hidden;
   background: var(--white);
 }
@@ -233,8 +233,8 @@ body:hover #cursor-ring {
   /* 16:9 cover trick */
   width: 100vw;
   height: 56.25vw;
-  min-height: 100vh;
-  min-width: 177.78vh;
+  min-height: 100dvh;
+  min-width: 177.78dvh;
   transform: translate(-50%, -50%);
   border: none;
   pointer-events: none;
@@ -353,7 +353,7 @@ body:hover #cursor-ring {
 
 /* ─── BUILDING SECTION ─── */
 #section-building {
-  height: 100vh;
+  height: 100dvh;
   width: 100%;
   overflow: hidden;
   position: relative;
