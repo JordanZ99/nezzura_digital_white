@@ -76,7 +76,7 @@
     const ltrs = document.querySelectorAll('#page-letters .ll');
 
     // ─── Phone detection: táctil, sin hover, pantalla pequeña ───
-    const isPhone = window.matchMedia('(hover: none) and (pointer: coarse) and (max-width: 767px)').matches;
+    const isPhone = window.matchMedia('(max-width: 900px)').matches;
 
     let letterData = null; // { initGap, initFontSize }
 
