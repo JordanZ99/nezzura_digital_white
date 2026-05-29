@@ -15,10 +15,22 @@
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 400;
     font-size: clamp(72px, 13vw, 210px);
-    letter-spacing: -0.01em;
+    letter-spacing: -0.1em;
     color: #080808;
     will-change: font-size, letter-spacing, font-weight;
     line-height: 1;
+  }
+
+  /* Móvil: fuente un poquitito más pequeña, mismo interletrado que scroll drive */
+  @media (max-width: 900px) {
+    #page-letters {
+      justify-content: center;
+      padding: 0;
+      gap: 26px;
+    }
+    #page-letters .ll {
+      font-size: clamp(60px, 11vw, 160px);
+    }
   }
 
   .ll.slide {
@@ -89,7 +101,7 @@
     const SCROLL_RANGE = Math.max(100, beachTop || window.innerHeight * 0.70);
     // En móvil: tamaño responsivo al viewport, máximo 8% del ancho (cap 32px)
     const FONT_END = isPhone ? Math.min(32, window.innerWidth * 0.08) : 74;
-    const LS_START = -0.01;
+    const LS_START = -0.1;
     const LS_END = 0.02;
     let scrollTicking = false;
     let layoutSwitched = false;
@@ -101,6 +113,12 @@
     function measureLetters() {
       const cs = getComputedStyle(ltrs[0]);
       const initFs = parseFloat(cs.fontSize) || Math.min(210, window.innerWidth * 0.13);
+
+      if (isPhone) {
+        // Móvil: gap fijo de 26px entre letras
+        letterData = { initGap: 26, initFontSize: initFs };
+        return;
+      }
 
       let totalW = 0;
       ltrs.forEach((el) => (totalW += el.offsetWidth));
@@ -136,9 +154,17 @@
         pl.style.transform = '';
         if (layoutSwitched) {
           layoutSwitched = false;
-          pl.style.justifyContent = 'space-between';
-          pl.style.padding = '0 35px';
-          pl.style.gap = '';
+          if (isPhone) {
+            // Mobile: restore CSS defaults (center, gap 26px, no padding)
+            pl.style.justifyContent = 'center';
+            pl.style.padding = '0';
+            pl.style.gap = '26px';
+          } else {
+            // Desktop: restore CSS defaults (space-between, padding)
+            pl.style.justifyContent = 'space-between';
+            pl.style.padding = '0 35px';
+            pl.style.gap = '';
+          }
         }
         ltrs.forEach((el) => {
           el.style.fontSize = '';
