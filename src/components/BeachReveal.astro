@@ -281,10 +281,21 @@
 
         beachImg.style.clipPath = `inset(${reveal}% 0 ${bottomMask}% 0)`;
 
-        const titles = document.getElementById('white-titles');
-        if (titles) {
-          const translateUp = bottomProgress * 35;
-          titles.style.transform = `translateY(-${translateUp}vh)`;
+        const translateUp = bottomProgress * 35;
+
+        // ─── Mobile: pull sections up to avoid gaps, preserve sticky ───
+        const isPhone = window.matchMedia('(max-width: 900px)').matches;
+        if (isPhone) {
+          const bw = document.getElementById('beach-white');
+          const cs = document.getElementById('creative-section');
+          if (bw) bw.style.transform = `translateY(-${translateUp}vh)`;
+          if (cs) cs.style.marginTop = `-${translateUp}vh`;   // margin doesn't break sticky
+        } else {
+          // Desktop: existing parallax — translate only the titles inside
+          const titles = document.getElementById('white-titles');
+          if (titles) {
+            titles.style.transform = `translateY(-${translateUp}vh)`;
+          }
         }
 
         ticking = false;
