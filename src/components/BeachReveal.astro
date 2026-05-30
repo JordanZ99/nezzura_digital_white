@@ -80,7 +80,7 @@
   #creative-section {
     position: relative;
     width: 100%;
-    min-height: 200vh;
+    min-height: 400vh;
     background: #ffffff;
     box-sizing: border-box;
     z-index: 3;
@@ -89,7 +89,7 @@
   #creative-section .creative-sticky {
     position: sticky;
     top: 0;
-    height: 95vh;
+    height: 100vh;
     overflow: hidden;
     display: flex;
     box-sizing: border-box;
@@ -224,13 +224,11 @@
     background: transparent;
     z-index: 4;
     box-sizing: border-box;
-  }
-
-  /* En desktop, la sección negra solapa con la parte inferior de creative-section
-     para cerrar el espacio que queda después de que el pin sticky se suelta */
+  }    /* En desktop, la sección negra solapa agresivamente para cubrir
+       la sección creativa mientras las laptops quedan pinneadas */
   @media (min-width: 901px) {
     #black-reveal {
-      margin-top: -80vh;
+      margin-top: -250vh;
     }
   }
 
@@ -329,7 +327,7 @@
 
   @media (max-width: 900px) {
     #black-reveal {
-      margin-top: -70vh;
+      margin-top: -250vh;
     }
   }
 
@@ -518,9 +516,12 @@
         return;
       }
 
+      // Cap at vh so image reveals fully within ~1 viewport of scroll
+      const cappedScrollable = Math.min(scrollable, vh);
+
       let progress = 0;
       if (rect.top < 0) {
-        progress = Math.max(0, Math.min(1, (-rect.top) / scrollable));
+        progress = Math.max(0, Math.min(1, (-rect.top) / cappedScrollable));
       }
 
       const revealInset = (1 - progress) * 100;
@@ -557,10 +558,10 @@
     function updateBlackReveal() {
       const rect = section.getBoundingClientRect();
 
-      // Start revealing when black section's top is well inside the viewport
-      // (delayed so laptop image reveal finishes first)
-      const revealStart = vh * 0.3;  // start when 70% visible from bottom
-      const revealEnd = -vh;         // ~130vh reveal range (still slow and dramatic)
+      // Start revealing when black section's top reaches viewport top
+      // (after laptop images are fully revealed and covered)
+      const revealStart = 0;
+      const revealEnd = -vh;         // 100vh reveal range
 
       let progress = 0;
       if (rect.top < revealStart) {
