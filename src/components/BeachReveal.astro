@@ -274,7 +274,7 @@
 
   #steps-section .steps-header {
     text-align: center;
-    margin-bottom: 60px;
+    margin-bottom: 100px;
   }
 
   #steps-section .steps-header h2 {
@@ -298,10 +298,17 @@
     letter-spacing: 0.1em;
   }
 
+  @media (min-width: 769px) {
+    #steps-section .steps-cards {
+      max-width: 560px;
+      margin: 0 auto;
+    }
+  }
+
   #steps-section .steps-cards {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 30px;
+    gap: clamp(200px, 25vh, 400px);
   }
 
   #steps-section .step-card {
@@ -362,7 +369,7 @@
       font-size: clamp(12px, 3vw, 15px);
     }
     #steps-section .steps-cards {
-      gap: 20px;
+      gap: clamp(120px, 20vh, 300px);
     }
     #steps-section .step-card .step-num {
       font-size: clamp(20px, 6vw, 28px);
