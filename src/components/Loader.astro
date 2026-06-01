@@ -38,6 +38,13 @@
     const loader = document.getElementById('loader');
     const loaderBar = document.getElementById('loader-bar');
 
+    // ─── Bloquear scroll y posicionar al tope ───
+    document.documentElement.style.overflow = 'hidden';
+    document.documentElement.style.height = '100%';
+    document.body.style.overflow = 'hidden';
+    document.body.style.height = '100%';
+    window.scrollTo(0, 0);
+
     // ─── Progress bar ───
     let progress = 0;
     const barInterval = setInterval(() => {
@@ -58,6 +65,11 @@
       if (loader) loader.classList.add('leaving');
       setTimeout(() => {
         if (loader) loader.style.display = 'none';
+        // Restaurar scroll después de que termine la animación de salida
+        document.documentElement.style.overflow = '';
+        document.documentElement.style.height = '';
+        document.body.style.overflow = '';
+        document.body.style.height = '';
       }, 750);
     }, exitAt);
   })();
