@@ -1,180 +1,181 @@
 <style>
-  #cotizacion-inner {
+  #cotizacion-section {
+    background: #ffffff;
+    width: 100%;
+    padding: clamp(100px, 10vh, 160px) 40px clamp(120px, 12vh, 180px);
+    box-sizing: border-box;
+  }
+
+  #cotizacion-section .cotizacion-inner {
     max-width: 1100px;
     width: 100%;
     margin: 0 auto;
-    padding-top: clamp(120px, 15vh, 200px);
   }
 
-  #cotizacion-inner .cotizacion-header {
+  #cotizacion-section .cotizacion-header {
     text-align: center;
     margin-bottom: 80px;
   }
 
-  #cotizacion-inner .cotizacion-header h2 {
+  #cotizacion-section .cotizacion-header h2 {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 500;
     font-size: clamp(28px, 3vw, 56px);
     letter-spacing: 0.05em;
-    color: #ffffff;
+    color: #080808;
     margin: 0 0 12px 0;
     text-transform: uppercase;
   }
 
-  #cotizacion-inner .cotizacion-header .cotizacion-sub {
+  #cotizacion-section .cotizacion-header .cotizacion-sub {
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 400;
+    font-weight: 500;
     font-size: clamp(15px, 1.1vw, 20px);
     line-height: 1.5;
-    color: #888888;
+    color: #000000ff;
     margin: 0;
     text-transform: uppercase;
     letter-spacing: 0.1em;
   }
 
-  #cotizacion-inner .cotizacion-cards {
+  #cotizacion-section .cotizacion-cards {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 24px;
   }
 
-  #cotizacion-inner .cotizacion-card {
-    background: rgba(255, 255, 255, 0.55);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-radius: 20px;
+  #cotizacion-section .cotizacion-card {
+    background: transparent;
+    border: none;
     padding: 36px 32px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.2);
     display: flex;
     flex-direction: column;
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
   }
 
-  #cotizacion-inner .cotizacion-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-    background: rgba(255, 255, 255, 0.7);
-  }
-
-  #cotizacion-inner .cotizacion-card .card-title {
+  #cotizacion-section .cotizacion-card .card-title {
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 500;
-    font-size: clamp(17px, 1.2vw, 22px);
-    color: #000000;
-    margin: 0 0 14px 0;
+    font-weight: 600;
+    font-size: clamp(16px, 1.1vw, 20px);
+    color: #000000ff;
+    margin: 0 0 16px 0;
     padding-bottom: 14px;
-    border-bottom: 1px solid rgba(0,0,0,0.12);
+    border-bottom: 1px solid #dddddd;
     text-transform: uppercase;
     letter-spacing: 0.03em;
   }
 
-  #cotizacion-inner .cotizacion-card .card-desc {
+  #cotizacion-section .cotizacion-card .card-desc {
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 400;
+    font-weight: 700;
     font-size: clamp(13px, 0.85vw, 15px);
-    line-height: 1.6;
-    color: #444444;
-    margin: 0 0 20px 0;
+    line-height: 1.7;
+    color: #000000ff;
+    margin: 0 0 24px 0;
     flex: 1;
+    text-transform: uppercase;
   }
 
-  #cotizacion-inner .cotizacion-card .card-price {
+  #cotizacion-section .cotizacion-card .card-price {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 600;
     font-size: clamp(22px, 1.8vw, 32px);
-    color: #000000;
-    margin: 0 0 6px 0;
+    color: #080808;
+    margin: 0 0 4px 0;
     letter-spacing: 0.02em;
+    text-transform: uppercase;
   }
 
-  #cotizacion-inner .cotizacion-card .card-time {
+  #cotizacion-section .cotizacion-card .card-time {
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 400;
+    font-weight: 500;
     font-size: clamp(12px, 0.75vw, 14px);
-    color: #888888;
+    color: #000000ff;
     margin: 0 0 6px 0;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
-  #cotizacion-inner .cotizacion-card .card-includes {
+  #cotizacion-section .cotizacion-card .card-includes {
     font-family: system-ui, -apple-system, sans-serif;
-    font-weight: 400;
+    font-weight: 700;
     font-size: clamp(12px, 0.75vw, 14px);
-    color: #666666;
-    margin: 12px 0 0 0;
-    padding-top: 12px;
-    border-top: 1px solid rgba(0,0,0,0.1);
-    line-height: 1.5;
+    color: #000000ff;
+    margin: 16px 0 0 0;
+    padding-top: 14px;
+    border-top: 1px solid #dddddd;
+    line-height: 1.6;
+    text-transform: uppercase;
   }
 
-  #cotizacion-inner .cotizacion-card .card-includes strong {
-    color: #000000;
-    font-weight: 500;
+  #cotizacion-section .cotizacion-card .card-includes strong {
+    color: #080808;
+    font-weight: 700;
   }
 
   @media (max-width: 768px) {
-    #cotizacion-inner {
-      padding-top: 60px;
+    #cotizacion-section {
+      padding: 80px 24px;
     }
 
-    #cotizacion-inner .cotizacion-header {
+    #cotizacion-section .cotizacion-header {
       margin-bottom: 40px;
     }
 
-    #cotizacion-inner .cotizacion-header h2 {
+    #cotizacion-section .cotizacion-header h2 {
       font-size: clamp(24px, 7vw, 32px);
     }
 
-    #cotizacion-inner .cotizacion-header .cotizacion-sub {
+    #cotizacion-section .cotizacion-header .cotizacion-sub {
       font-size: clamp(12px, 3vw, 15px);
     }
 
-    #cotizacion-inner .cotizacion-cards {
+    #cotizacion-section .cotizacion-cards {
       grid-template-columns: 1fr;
-      gap: 20px;
+      gap: 0;
     }
 
-    #cotizacion-inner .cotizacion-card {
-      padding: 28px 24px;
+    #cotizacion-section .cotizacion-card {
+      padding: 28px 0;
     }
   }
 </style>
 
-<div id="cotizacion-inner">
+<section id="cotizacion-section">
+  <div class="cotizacion-inner">
     <div class="cotizacion-header">
-      <h2>Lo que hacemos</h2>
-      <p class="cotizacion-sub">Soluciones digitales que venden</p>
+      <h2>LO QUE HACEMOS</h2>
+      <p class="cotizacion-sub">SOLUCIONES DIGITALES QUE VENDEN</p>
     </div>
     <div class="cotizacion-cards">
       <div class="cotizacion-card">
-        <p class="card-title">Landing Pages profesionales</p>
-        <p class="card-desc">Para negocios que necesitan capturar clientes desde el primer clic. R&aacute;pidas, optimizadas para Google y dise&ntilde;adas para convertir visitas en ventas.</p>
+        <p class="card-title">LANDING PAGES PROFESIONALES</p>
+        <p class="card-desc">PARA NEGOCIOS QUE NECESITAN CAPTURAR CLIENTES DESDE EL PRIMER CLIC. RÁPIDAS, OPTIMIZADAS PARA GOOGLE Y DISEÑADAS PARA CONVERTIR VISITAS EN VENTAS.</p>
         <p class="card-price">$4,899 MXN</p>
-        <p class="card-time">Entrega en 5&ndash;7 d&iacute;as h&aacute;biles</p>
-        <p class="card-includes"><strong>Incluye GRATIS por 1 a&ntilde;o:</strong><br />Dominio &middot; Hosting</p>
+        <p class="card-time">ENTREGA EN 5&ndash;7 DÍAS HÁBILES</p>
+        <p class="card-includes"><strong>INCLUYE GRATIS POR 1 AÑO:</strong><br />DOMINIO &middot; HOSTING</p>
       </div>
 
       <div class="cotizacion-card">
-        <p class="card-title">P&aacute;ginas web completas</p>
-        <p class="card-desc">Portafolios, sitios de empresa, plataformas de reservas, men&uacute;s interactivos. Animaciones y dise&ntilde;o de alto est&aacute;ndar que elevan tu marca. Todo a medida para que tenga la presencia que se merece.</p>
-        <p class="card-price">Desde $14,999 MXN</p>
-        <p class="card-time">Entrega en 3&ndash;6 semanas (seg&uacute;n la complejidad)</p>
-        <p class="card-includes"><strong>Incluye GRATIS por 1 a&ntilde;o:</strong><br />Dominio &middot; Hosting</p>
+        <p class="card-title">PÁGINAS WEB COMPLETAS</p>
+        <p class="card-desc">PORTAFOLIOS, SITIOS DE EMPRESA, PLATAFORMAS DE RESERVAS, MENÚS INTERACTIVOS. ANIMACIONES Y DISEÑO DE ALTO ESTÁNDAR QUE ELEVAN TU MARCA. TODO A MEDIDA PARA QUE TENGA LA PRESENCIA QUE SE MERECE.</p>
+        <p class="card-price">DESDE $14,999 MXN</p>
+        <p class="card-time">ENTREGA EN 3&ndash;6 SEMANAS (SEGÚN LA COMPLEJIDAD)</p>
+        <p class="card-includes"><strong>INCLUYE GRATIS POR 1 AÑO:</strong><br />DOMINIO &middot; HOSTING</p>
       </div>
 
       <div class="cotizacion-card">
-        <p class="card-title">Aplicaciones web</p>
-        <p class="card-desc">&iquest;Tienes una idea de negocio que necesita software? La construimos. Desde sistemas internos para automatizar tareas y ahorrarte dinero, hasta productos digitales listos para vender.</p>
-        <p class="card-price">Desde $48,000 MXN</p>
-        <p class="card-time">Tiempo estimado: 1 a 3 meses</p>
+        <p class="card-title">APLICACIONES WEB</p>
+        <p class="card-desc">¿TIENES UNA IDEA DE NEGOCIO QUE NECESITA SOFTWARE? LA CONSTRUIMOS. DESDE SISTEMAS INTERNOS PARA AUTOMATIZAR TAREAS Y AHORRARTE DINERO, HASTA PRODUCTOS DIGITALES LISTOS PARA VENDER.</p>
+        <p class="card-price">DESDE $48,000 MXN</p>
+        <p class="card-time">TIEMPO ESTIMADO: 1 A 3 MESES</p>
       </div>
 
       <div class="cotizacion-card">
-        <p class="card-title">Mantenimiento y Soporte Cloud</p>
-        <p class="card-desc">&iquest;Qu&eacute; incluye? Monitoreo de servidores y bases de datos, respaldos autom&aacute;ticos diarios, parches de seguridad, correcci&oacute;n de bugs y optimizaci&oacute;n del sistema para que tu software nunca deje de funcionar.</p>
-        <p class="card-price">Desde $1,500 MXN / mes</p>
-        <p class="card-time">Obligatorio post entrega en proyectos de alto rendimiento</p>
+        <p class="card-title">MANTENIMIENTO Y SOPORTE CLOUD</p>
+        <p class="card-desc">¿QUÉ INCLUYE? MONITOREO DE SERVIDORES Y BASES DE DATOS, RESPALDOS AUTOMÁTICOS DIARIOS, PARCHES DE SEGURIDAD, CORRECCIÓN DE BUGS Y OPTIMIZACIÓN DEL SISTEMA PARA QUE TU SOFTWARE NUNCA DEJE DE FUNCIONAR.</p>
+        <p class="card-price">DESDE $1,500 MXN / MES</p>
+        <p class="card-time">OBLIGATORIO POST ENTREGA EN PROYECTOS DE ALTO RENDIMIENTO</p>
       </div>
     </div>
   </div>
+</section>
