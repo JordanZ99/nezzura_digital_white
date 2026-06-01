@@ -216,23 +216,29 @@
     }
   }
 
-  /* ─── Sección negra con scroll-driven mask reveal ─── */
-  #black-reveal {
+  /* ─── Sección de steps con scroll-driven reveal + cards blancas ─── */
+  #steps-section {
     position: relative;
     width: 100%;
     min-height: 300vh;
     background: transparent;
     z-index: 4;
     box-sizing: border-box;
-  }    /* En desktop, la sección negra solapa agresivamente para cubrir
-       la sección creativa mientras las laptops quedan pinneadas */
+  }
+
   @media (min-width: 901px) {
-    #black-reveal {
+    #steps-section {
       margin-top: -250vh;
     }
   }
 
-  #black-reveal .black-sticky {
+  @media (max-width: 900px) {
+    #steps-section {
+      margin-top: -250vh;
+    }
+  }
+
+  #steps-section .steps-sticky {
     position: sticky;
     top: 0;
     height: 100vh;
@@ -240,7 +246,7 @@
     box-sizing: border-box;
   }
 
-  #black-reveal .black-mask {
+  #steps-section .steps-mask {
     width: 100%;
     height: 100%;
     background: #0a0a0a;
@@ -250,22 +256,22 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
+    justify-content: flex-start;
     overflow-y: auto;
-    padding: 120px 40px;
+    padding: 100px 40px 140px;
   }
 
-  #black-reveal .br-inner {
-    width: 100%;
+  #steps-section .steps-inner {
     max-width: 1100px;
+    width: 100%;
   }
 
-  #black-reveal .br-header {
+  #steps-section .steps-header {
     text-align: center;
-    margin-bottom: 80px;
+    margin-bottom: 60px;
   }
 
-  #black-reveal .br-header h2 {
+  #steps-section .steps-header h2 {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 500;
     font-size: clamp(28px, 3vw, 56px);
@@ -275,7 +281,7 @@
     text-transform: uppercase;
   }
 
-  #black-reveal .br-header .br-sub {
+  #steps-section .steps-header .steps-sub {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 400;
     font-size: clamp(15px, 1.1vw, 20px);
@@ -286,77 +292,80 @@
     letter-spacing: 0.1em;
   }
 
-  #black-reveal .br-steps {
+  #steps-section .steps-cards {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 40px 60px;
+    gap: 30px;
   }
 
-  #black-reveal .br-step {
-    text-align: left;
+  #steps-section .step-card {
+    background: #ffffff;
+    border-radius: 24px;
+    padding: clamp(28px, 3vw, 48px);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
   }
 
-  #black-reveal .br-step .br-num {
+  #steps-section .step-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 40px rgba(0,0,0,0.25);
+  }
+
+  #steps-section .step-card .step-num {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 500;
     font-size: clamp(24px, 2vw, 40px);
-    color: #2a2a2a;
-    margin: 0 0 8px 0;
+    color: #888888;
+    margin: 0 0 12px 0;
     line-height: 1;
     text-transform: uppercase;
   }
 
-  #black-reveal .br-step .br-step-title {
+  #steps-section .step-card .step-title {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 500;
     font-size: clamp(17px, 1.2vw, 22px);
-    color: #ffffff;
-    margin: 0 0 6px 0;
+    color: #000000;
+    margin: 0 0 10px 0;
     text-transform: uppercase;
   }
 
-  #black-reveal .br-step .br-step-desc {
+  #steps-section .step-card .step-desc {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 400;
     font-size: clamp(13px, 0.9vw, 16px);
     line-height: 1.6;
-    color: #888888;
+    color: #555555;
     margin: 0;
     text-transform: uppercase;
   }
 
-  @media (max-width: 900px) {
-    #black-reveal {
-      margin-top: -250vh;
-    }
-  }
-
   @media (max-width: 768px) {
-    #black-reveal .black-mask {
+    #steps-section .steps-mask {
       padding: 80px 24px;
       justify-content: flex-start;
       padding-top: 120px;
     }
-    #black-reveal .br-header {
-      margin-bottom: 50px;
+    #steps-section .steps-header {
+      margin-bottom: 40px;
     }
-    #black-reveal .br-header h2 {
+    #steps-section .steps-header h2 {
       font-size: clamp(24px, 7vw, 32px);
     }
-    #black-reveal .br-header .br-sub {
+    #steps-section .steps-header .steps-sub {
       font-size: clamp(12px, 3vw, 15px);
     }
-    #black-reveal .br-steps {
+    #steps-section .steps-cards {
       grid-template-columns: 1fr;
-      gap: 32px;
+      gap: 20px;
     }
-    #black-reveal .br-step .br-num {
+    #steps-section .step-card .step-num {
       font-size: clamp(20px, 6vw, 28px);
     }
-    #black-reveal .br-step .br-step-title {
+    #steps-section .step-card .step-title {
       font-size: clamp(15px, 3.5vw, 18px);
     }
-    #black-reveal .br-step .br-step-desc {
+    #steps-section .step-card .step-desc {
       font-size: clamp(12px, 3vw, 14px);
     }
   }
@@ -389,40 +398,82 @@
   </div>
 </section>
 
-<section id="black-reveal">
-  <div class="black-sticky">
-    <div class="black-mask">
-      <div class="br-inner">
-        <div class="br-header">
+<section id="steps-section">
+  <div class="steps-sticky">
+    <div class="steps-mask">
+      <div class="steps-inner">
+        <div class="steps-header">
           <h2>Sin tecnicismos, sin sorpresas</h2>
-          <p class="br-sub">Así trabajamos</p>
+          <p class="steps-sub">Así trabajamos</p>
         </div>
-        <div class="br-steps">
-          <div class="br-step">
-            <p class="br-num">01</p>
-            <p class="br-step-title">Nos cuentas tu idea</p>
-            <p class="br-step-desc">Una llamada de 30 minutos. Gratis, sin compromiso. Entendemos tu negocio, tu cliente y tu objetivo.</p>
+        <div class="steps-cards">
+          <div class="step-card">
+            <p class="step-num">01</p>
+            <p class="step-title">Nos cuentas tu idea</p>
+            <p class="step-desc">Una llamada de 30 minutos. Gratis, sin compromiso. Entendemos tu negocio, tu cliente y tu objetivo.</p>
           </div>
-          <div class="br-step">
-            <p class="br-num">02</p>
-            <p class="br-step-title">Te enviamos una propuesta clara</p>
-            <p class="br-step-desc">Precio fijo, tiempo de entrega definido y exactamente qué vas a recibir. Sin letras pequeñas en un lapso menor a 24 horas.</p>
+          <div class="step-card">
+            <p class="step-num">02</p>
+            <p class="step-title">Te enviamos una propuesta clara</p>
+            <p class="step-desc">Precio fijo, tiempo de entrega definido y exactamente qué vas a recibir. Sin letras pequeñas en un lapso menor a 24 horas.</p>
           </div>
-          <div class="br-step">
-            <p class="br-num">03</p>
-            <p class="br-step-title">Construimos juntos</p>
-            <p class="br-step-desc">Te mantenemos al tanto en cada paso. Tú apruebas, nosotros ejecutamos.</p>
+          <div class="step-card">
+            <p class="step-num">03</p>
+            <p class="step-title">Construimos juntos</p>
+            <p class="step-desc">Te mantenemos al tanto en cada paso. Tú apruebas, nosotros ejecutamos.</p>
           </div>
-          <div class="br-step">
-            <p class="br-num">04</p>
-            <p class="br-step-title">Lanzamos y te acompa&ntilde;amos</p>
-            <p class="br-step-desc">El proyecto sale vivo y no desaparecemos. Soporte real de 30 d&iacute;as incluido.</p>
+          <div class="step-card">
+            <p class="step-num">04</p>
+            <p class="step-title">Lanzamos y te acompa&ntilde;amos</p>
+            <p class="step-desc">El proyecto sale vivo y no desaparecemos. Soporte real de 30 d&iacute;as incluido.</p>
           </div>
         </div>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  (function () {
+    var section = document.getElementById('steps-section');
+    var mask = section && section.querySelector('.steps-mask');
+    if (!section || !mask) return;
+
+    var vh = window.innerHeight;
+
+    window.addEventListener('resize', function () {
+      vh = window.innerHeight;
+    });
+
+    var ticking = false;
+
+    function updateStepsReveal() {
+      var rect = section.getBoundingClientRect();
+
+      var revealStart = 0;
+      var revealEnd = -vh;
+
+      var progress = 0;
+      if (rect.top < revealStart) {
+        progress = Math.max(0, Math.min(1, (revealStart - rect.top) / (revealStart - revealEnd)));
+      }
+
+      var revealInset = (1 - progress) * 100;
+      mask.style.clipPath = 'inset(' + revealInset + '% 0 0 0)';
+
+      ticking = false;
+    }
+
+    window.addEventListener('scroll', function () {
+      if (!ticking) {
+        requestAnimationFrame(updateStepsReveal);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    updateStepsReveal();
+  })();
+</script>
 
 <script>
   (function () {
@@ -541,47 +592,3 @@
   })();
 </script>
 
-<script>
-  (function () {
-    const section = document.getElementById('black-reveal');
-    const mask = section && section.querySelector('.black-mask');
-    if (!section || !mask) return;
-
-    let vh = window.innerHeight;
-
-    window.addEventListener('resize', () => {
-      vh = window.innerHeight;
-    });
-
-    let ticking = false;
-
-    function updateBlackReveal() {
-      const rect = section.getBoundingClientRect();
-
-      // Start revealing when black section's top reaches viewport top
-      // (after laptop images are fully revealed and covered)
-      const revealStart = 0;
-      const revealEnd = -vh;         // 100vh reveal range
-
-      let progress = 0;
-      if (rect.top < revealStart) {
-        progress = Math.max(0, Math.min(1, (revealStart - rect.top) / (revealStart - revealEnd)));
-      }
-
-      // Reveal from top to bottom: 100% → 0% inset
-      const revealInset = (1 - progress) * 100;
-      mask.style.clipPath = 'inset(' + revealInset + '% 0 0 0)';
-
-      ticking = false;
-    }
-
-    window.addEventListener('scroll', function () {
-      if (!ticking) {
-        requestAnimationFrame(updateBlackReveal);
-        ticking = true;
-      }
-    }, { passive: true });
-
-    updateBlackReveal();
-  })();
-</script>
