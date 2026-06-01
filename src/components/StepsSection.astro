@@ -304,7 +304,7 @@ import CotizacionSection from './CotizacionSection.astro';
     }
 
     var blackholeImg = document.getElementById('blackhole-frame');
-    var isMobile = window.innerWidth <= 768;
+    var isMobile = window.innerWidth < 900;
     var TOTAL_FRAMES = isMobile ? 98 : 72;
     var FRAME_STEP = isMobile ? 5 : 2;
     var BASE_PATH = isMobile ? '/assets/blackholeMovil/' : '/assets/blackhole/';
@@ -359,7 +359,7 @@ import CotizacionSection from './CotizacionSection.astro';
     }, { passive: true });
 
     window.addEventListener('resize', function () {
-      var newIsMobile = window.innerWidth <= 768;
+      var newIsMobile = window.innerWidth < 900;
       if (newIsMobile !== isMobile) {
         isMobile = newIsMobile;
         TOTAL_FRAMES = isMobile ? 98 : 72;
