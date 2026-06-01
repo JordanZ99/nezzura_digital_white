@@ -175,26 +175,25 @@
           <h2>Sin tecnicismos, sin sorpresas</h2>
           <p class="steps-sub">Así trabajamos</p>
         </div>
-        <div class="steps-cards">
-          <div class="step-card">
+        <div class="steps-cards">            <div class="step-card">
             <p class="step-num">01</p>
             <p class="step-title">Nos cuentas tu idea</p>
-            <p class="step-desc">Una llamada de 30 minutos. Gratis, sin compromiso. Entendemos tu negocio, tu cliente y tu objetivo.</p>
+            <p class="step-desc">Una llamada de 30 minutos. Gratis y sin compromiso. Entendemos tu negocio, tu cliente ideal y tus objetivos para diseñar la soluci&oacute;n exacta que necesitas.</p>
           </div>
           <div class="step-card">
             <p class="step-num">02</p>
-            <p class="step-title">Te enviamos una propuesta clara</p>
-            <p class="step-desc">Precio fijo, tiempo de entrega definido y exactamente qué vas a recibir. Sin letras pequeñas en un lapso menor a 24 horas.</p>
+            <p class="step-title">Propuesta clara en menos de 24 horas</p>
+            <p class="step-desc">Recibes una cotizaci&oacute;n formal con precio fijo, fecha de entrega definida y el alcance exacto de tu proyecto. Sin sorpresas ni letras chiquitas.</p>
           </div>
           <div class="step-card">
             <p class="step-num">03</p>
-            <p class="step-title">Construimos juntos</p>
-            <p class="step-desc">Te mantenemos al tanto en cada paso. Tú apruebas, nosotros ejecutamos.</p>
+            <p class="step-title">Dise&ntilde;o primero, aprobaci&oacute;n y c&oacute;digo</p>
+            <p class="step-desc">Creamos el prototipo visual de tu plataforma en Figma para que apruebes el dise&ntilde;o y hagas cambios antes de programar. Con entregas semanales, t&uacute; tienes el control total y nosotros la ejecuci&oacute;n impecable.</p>
           </div>
           <div class="step-card">
             <p class="step-num">04</p>
-            <p class="step-title">Lanzamos y te acompa&ntilde;amos</p>
-            <p class="step-desc">El proyecto sale vivo y no desaparecemos. Soporte real de 30 d&iacute;as incluido.</p>
+            <p class="step-title">Lanzamiento y soporte continuo</p>
+            <p class="step-desc">Tu software sale al mundo de forma segura. Te incluimos 30 d&iacute;as de soporte real gratis y te dejamos configurado el plan de mantenimiento cloud para que tu negocio nunca deje de funcionar.</p>
           </div>
         </div>
       </div>
@@ -216,7 +215,7 @@
 
     var ticking = false;
 
-    var scrollEnabled = false;
+    var scrollLocked = true;
     var maskStyle = mask.style;
 
     function updateStepsReveal() {
@@ -233,8 +232,11 @@
       var revealInset = (1 - progress) * 100;
       maskStyle.clipPath = 'inset(' + revealInset + '% 0 0 0)';
 
-      if (!scrollEnabled && revealInset <= 0) {
-        scrollEnabled = true;
+      if (revealInset > 0 && !scrollLocked) {
+        scrollLocked = true;
+        maskStyle.overflowY = 'hidden';
+      } else if (revealInset <= 0 && scrollLocked) {
+        scrollLocked = false;
         maskStyle.overflowY = 'auto';
       }
 
