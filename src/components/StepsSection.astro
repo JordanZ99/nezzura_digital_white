@@ -303,8 +303,8 @@
 
     var blackholeImg = document.getElementById('blackhole-frame');
     var isMobile = window.innerWidth < 900;
-    var TOTAL_FRAMES = isMobile ? 98 : 72;
-    var FRAME_STEP = isMobile ? 5 : 2;
+    var TOTAL_FRAMES = isMobile ? 55 : 72;
+    var FRAME_STEP = isMobile ? 12 : 2;
     var BASE_PATH = isMobile ? '/assets/blackholeMovil/' : '/assets/blackhole/';
     var currentFrame = -1;
 
@@ -360,8 +360,8 @@
       var newIsMobile = window.innerWidth < 900;
       if (newIsMobile !== isMobile) {
         isMobile = newIsMobile;
-        TOTAL_FRAMES = isMobile ? 98 : 72;
-        FRAME_STEP = isMobile ? 5 : 2;
+        TOTAL_FRAMES = isMobile ? 55 : 72;
+        FRAME_STEP = isMobile ? 12 : 2;
         BASE_PATH = isMobile ? '/assets/blackholeMovil/' : '/assets/blackhole/';
         currentFrame = -1;
       }
