@@ -246,6 +246,10 @@
     box-sizing: border-box;
   }
 
+  #steps-section .steps-mask::-webkit-scrollbar {
+    display: none;
+  }
+
   #steps-section .steps-mask {
     width: 100%;
     height: 100%;
@@ -257,7 +261,9 @@
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
-    overflow-y: hidden;
+    overflow-y: auto;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
     padding: 100px 40px 140px;
   }
 
@@ -294,7 +300,7 @@
 
   #steps-section .steps-cards {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr;
     gap: 30px;
   }
 
@@ -356,7 +362,6 @@
       font-size: clamp(12px, 3vw, 15px);
     }
     #steps-section .steps-cards {
-      grid-template-columns: 1fr;
       gap: 20px;
     }
     #steps-section .step-card .step-num {
