@@ -287,9 +287,10 @@
 
 <script>
   (function () {
-    var mask = document.querySelector('.steps-mask');
+    var section = document.getElementById('steps-section');
+    var mask = section && section.querySelector('.steps-mask');
     var cards = mask ? Array.from(mask.querySelectorAll('.step-card')) : [];
-    if (!mask || cards.length === 0) return;
+    if (!section || !mask || cards.length === 0) return;
 
     var SCALE_MIN = 0.7;
     var ticking = false;
@@ -308,6 +309,10 @@
     var BASE_PATH = isMobile ? '/assets/blackholeMovil/' : '/assets/blackhole/';
     var currentFrame = -1;
 
+    /* --- Frame cache --- */
+    var frameCache = {};
+    var preloadStarted = false;
+
     function padFrame(n) {
       var s = '00000' + n;
       return s.slice(-5);
@@ -317,6 +322,42 @@
       var frameNum = 1 + index * FRAME_STEP;
       return BASE_PATH + 'scene' + padFrame(frameNum) + '.png';
     }
+
+    /* Aggressive preloading: start when section is 1500px away */
+    function preloadAllFrames() {
+      if (preloadStarted) return;
+      preloadStarted = true;
+      var loaded = 0;
+      for (var i = 0; i < TOTAL_FRAMES; i++) {
+        (function(idx) {
+          var img = new Image();
+          img.onload = function () {
+            frameCache[idx] = img;
+            loaded++;
+          };
+          img.onerror = function () {
+            /* Retry once after 2s */
+            setTimeout(function () {
+              var retry = new Image();
+              retry.onload = function () {
+                frameCache[idx] = retry;
+              };
+              retry.src = frameSrc(idx);
+            }, 2000);
+            loaded++;
+          };
+          img.src = frameSrc(idx);
+        })(i);
+      }
+    }
+
+    var preloadObserver = new IntersectionObserver(function (entries) {
+      if (entries[0].isIntersecting) {
+        preloadAllFrames();
+        preloadObserver.disconnect();
+      }
+    }, { rootMargin: '1500px 0px 0px 0px' });
+    preloadObserver.observe(section);
 
     if (isMobile && blackholeImg) {
       blackholeImg.src = frameSrc(0);
@@ -340,7 +381,12 @@
         var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.round(scrollProgress * (TOTAL_FRAMES - 1)));
         if (frameIndex !== currentFrame) {
           currentFrame = frameIndex;
-          blackholeImg.src = frameSrc(frameIndex);
+          /* Use cached image src if available (instant from memory), else fallback */
+          if (frameCache[frameIndex]) {
+            blackholeImg.src = frameCache[frameIndex].src;
+          } else {
+            blackholeImg.src = frameSrc(frameIndex);
+          }
         }
       }
 
@@ -364,6 +410,9 @@
         FRAME_STEP = isMobile ? 12 : 2;
         BASE_PATH = isMobile ? '/assets/blackholeMovil/' : '/assets/blackhole/';
         currentFrame = -1;
+        frameCache = {};
+        preloadStarted = false;
+        preloadAllFrames();
       }
       calculateRange();
       if (!ticking) {
