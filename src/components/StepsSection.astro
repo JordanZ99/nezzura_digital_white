@@ -5,23 +5,14 @@
   #steps-section {
     position: relative;
     width: 100%;
-    min-height: 300vh;
     background: transparent;
     z-index: 4;
     box-sizing: border-box;
   }
 
-  @media (min-width: 901px) {
-    #steps-section {
-      margin-top: -250vh;
-    }
-  }
 
-  @media (max-width: 900px) {
-    #steps-section {
-      margin-top: -250vh;
-    }
-  }
+
+
 
   #steps-section .steps-sticky {
     position: sticky;
@@ -242,6 +233,7 @@
 
     window.addEventListener('resize', function () {
       vh = window.innerHeight;
+      adjustSectionHeight();
     });
 
     var ticking = false;
@@ -280,6 +272,18 @@
         ticking = true;
       }
     }, { passive: true });
+
+    /* --- Dynamic height: section height = reveal scroll (1vh) + mask internal scroll --- */
+    function adjustSectionHeight() {
+      var scrollable = mask.scrollHeight - mask.clientHeight;
+      /* The section needs: 1 viewport height for the reveal animation + the mask's internal scroll */
+      var neededHeight = vh + scrollable;
+      section.style.minHeight = neededHeight + 'px';
+      /* Pull the section up so the reveal animation starts at the right scroll position */
+      section.style.marginTop = '-' + (neededHeight - vh) + 'px';
+    }
+
+    adjustSectionHeight();
 
     updateStepsReveal();
   })();
