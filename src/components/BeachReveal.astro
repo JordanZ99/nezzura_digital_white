@@ -251,6 +251,7 @@
   }
 
   #steps-section .steps-mask {
+    position: relative;
     width: 100%;
     height: 100%;
     background: #0a0a0a;
@@ -318,7 +319,7 @@
     border-radius: 24px;
     padding: clamp(28px, 3vw, 48px);
     box-shadow: 0 8px 32px rgba(0,0,0,0.2);
-    transition: transform 0.3s ease, box-shadow 0.3s ease, background 0.3s ease;
+    transition: box-shadow 0.3s ease, background 0.3s ease;
   }
 
   #steps-section .step-card:hover {
@@ -613,6 +614,56 @@
     }, { passive: true });
 
     updateCreativeReveal();
+  })();
+</script>
+
+<script>
+  (function () {
+    var mask = document.querySelector('.steps-mask');
+    var cards = mask ? Array.from(mask.querySelectorAll('.step-card')) : [];
+    if (!mask || cards.length === 0) return;
+
+    var SCALE_MIN = 0.7;
+    var ticking = false;
+    var range = 400;
+
+    function calculateRange() {
+      if (cards.length > 1) {
+        range = Math.abs(cards[1].offsetTop - cards[0].offsetTop);
+      }
+    }
+
+    function updateCardScales() {
+      var center = mask.scrollTop + mask.clientHeight / 2;
+
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        var cardCenter = card.offsetTop + card.offsetHeight / 2;
+        var distance = Math.abs(center - cardCenter);
+        var progress = Math.min(1, distance / range);
+        var scale = 1 - (1 - SCALE_MIN) * progress;
+        card.style.transform = 'scale(' + scale.toFixed(3) + ')';
+      }
+
+      ticking = false;
+    }
+
+    calculateRange();
+
+    mask.addEventListener('scroll', function () {
+      if (!ticking) {
+        requestAnimationFrame(updateCardScales);
+        ticking = true;
+      }
+    }, { passive: true });
+
+    window.addEventListener('resize', function () {
+      calculateRange();
+      if (!ticking) {
+        requestAnimationFrame(updateCardScales);
+        ticking = true;
+      }
+    }, { passive: true });
   })();
 </script>
 
