@@ -8,7 +8,7 @@
     background: transparent;
     z-index: 4;
     box-sizing: border-box;
-    min-height: 300vh;
+    min-height: 500vh;
     margin-top: -200vh;
   }
 
@@ -113,10 +113,11 @@
   #steps-section .steps-cards {
     display: grid;
     grid-template-columns: 1fr;
-    gap: clamp(200px, 25vh, 400px);
+    gap: clamp(400px, 50vh, 800px);
   }
 
   #steps-section .step-card {
+    position: relative;
     background: rgba(255, 255, 255, 0.55);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -128,6 +129,47 @@
 
   #steps-section .step-card:hover {
     background: rgba(255, 255, 255, 0.7);
+  }
+
+  #steps-section .step-next-btn,
+  #steps-section .step-prev-btn {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    background: none;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    color: white;
+    opacity: 0.6;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  #steps-section .step-next-btn {
+    bottom: clamp(-90px, -15vh, -60px);
+  }
+
+  #steps-section .step-prev-btn {
+    top: clamp(-90px, -15vh, -60px);
+  }
+
+  #steps-section .step-next-btn:hover {
+    opacity: 1;
+    transform: translate(-50%, 8px);
+  }
+
+  #steps-section .step-prev-btn:hover {
+    opacity: 1;
+    transform: translate(-50%, -8px);
+  }
+
+  #steps-section .step-next-btn svg,
+  #steps-section .step-prev-btn svg {
+    width: 54px;
+    height: 54px;
   }
 
   #steps-section .step-card .step-num {
@@ -174,7 +216,8 @@
       font-size: clamp(12px, 3vw, 15px);
     }
     #steps-section .steps-cards {
-      gap: clamp(120px, 20vh, 300px);
+      gap: clamp(240px, 40vh, 600px);
+      margin-top: 25vh;
     }
     #steps-section .step-card .step-num {
       font-size: clamp(20px, 6vw, 28px);
@@ -203,18 +246,36 @@
             <p class="step-num">01</p>
             <p class="step-title">Nos cuentas tu idea</p>
             <p class="step-desc">Una llamada de 30 minutos. Gratis y sin compromiso. Entendemos tu negocio, tu cliente ideal y tus objetivos para diseñar la soluci&oacute;n exacta que necesitas.</p>
+            <button class="step-next-btn" data-target="1" aria-label="Siguiente paso">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 12 16 22 8"></polyline></svg>
+            </button>
           </div>
           <div class="step-card">
+            <button class="step-prev-btn" data-target="0" aria-label="Paso anterior">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 16 12 8 22 16"></polyline></svg>
+            </button>
             <p class="step-num">02</p>
             <p class="step-title">Propuesta clara en menos de 24 horas</p>
             <p class="step-desc">Recibes una cotizaci&oacute;n formal con precio fijo, fecha de entrega definida y el alcance exacto de tu proyecto. Sin sorpresas ni letras chiquitas.</p>
+            <button class="step-next-btn" data-target="2" aria-label="Siguiente paso">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 12 16 22 8"></polyline></svg>
+            </button>
           </div>
           <div class="step-card">
+            <button class="step-prev-btn" data-target="1" aria-label="Paso anterior">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 16 12 8 22 16"></polyline></svg>
+            </button>
             <p class="step-num">03</p>
             <p class="step-title">Dise&ntilde;o primero, aprobaci&oacute;n y c&oacute;digo</p>
             <p class="step-desc">Creamos el prototipo visual de tu plataforma en Figma para que apruebes el dise&ntilde;o y hagas cambios antes de programar. Con entregas semanales, t&uacute; tienes el control total y nosotros la ejecuci&oacute;n impecable.</p>
+            <button class="step-next-btn" data-target="3" aria-label="Siguiente paso">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 12 16 22 8"></polyline></svg>
+            </button>
           </div>
           <div class="step-card">
+            <button class="step-prev-btn" data-target="2" aria-label="Paso anterior">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 16 12 8 22 16"></polyline></svg>
+            </button>
             <p class="step-num">04</p>
             <p class="step-title">Lanzamiento y soporte continuo</p>
             <p class="step-desc">Tu software sale al mundo de forma segura. Te incluimos 30 d&iacute;as de soporte real gratis y te dejamos configurado el plan de mantenimiento cloud para que tu negocio nunca deje de funcionar.</p>
@@ -375,5 +436,36 @@
     }, { passive: true });
 
     updateAllOnScroll();
+
+    // --- LOGICA DE BOTONES SIGUIENTE Y ANTERIOR --- 
+    var navBtns = mask ? Array.from(mask.querySelectorAll('.step-next-btn, .step-prev-btn')) : [];
+    navBtns.forEach(function(btn) {
+      btn.addEventListener('click', function(e) {
+        e.preventDefault();
+        var targetIndex = parseInt(btn.getAttribute('data-target'), 10);
+        if (isNaN(targetIndex)) return;
+
+        var rect = section.getBoundingClientRect();
+        var absoluteTop = window.scrollY + rect.top;
+        var totalScrollable = rect.height - vh;
+        var maxTranslate = Math.max(0, inner.scrollHeight - vh + 100);
+
+        var progress = 1; // Default to end of section if index is out of bounds
+        
+        if (cards[targetIndex]) {
+          var targetCard = cards[targetIndex];
+          var desiredTranslate = targetCard.offsetTop + targetCard.offsetHeight / 2 - vh / 2;
+          progress = maxTranslate > 0 ? desiredTranslate / maxTranslate : 0;
+        }
+
+        progress = Math.max(0, Math.min(1, progress));
+        var targetScrollY = absoluteTop + progress * totalScrollable;
+        
+        window.scrollTo({
+          top: targetScrollY,
+          behavior: 'smooth'
+        });
+      });
+    });
   })();
 </script>

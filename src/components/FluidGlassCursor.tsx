@@ -1,4 +1,4 @@
-import { useRef, useEffect } from 'react';
+import { useRef, useEffect, useState } from 'react';
 
 const SIZE = 96; // cursor diameter in px
 const LERP = 0.13; // smoothing (lower = more lag, higher = snappier)
@@ -46,15 +46,20 @@ function makeLensMap(size: number): string {
 }
 
 export default function FluidGlassCursor() {
+  const [isActive] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return window.matchMedia('(pointer: fine)').matches && window.innerWidth >= 900;
+    }
+    return false;
+  });
+
   const cursorRef = useRef<HTMLDivElement>(null);
   const pos = useRef({ x: -300, y: -300 });
   const target = useRef({ x: -300, y: -300 });
   const raf = useRef<number>(0);
 
   useEffect(() => {
-    // Only activate on desktop with a fine pointer (mouse/trackpad)
-    if (!window.matchMedia('(pointer: fine)').matches) return;
-    if (window.innerWidth < 900) return;
+    if (!isActive) return;
 
     // Inject lens displacement map into the SVG filter
     const url = makeLensMap(256);
@@ -92,6 +97,8 @@ export default function FluidGlassCursor() {
       cancelAnimationFrame(raf.current);
     };
   }, []);
+
+  if (!isActive) return null;
 
   return (
     <>
