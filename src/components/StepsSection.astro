@@ -353,71 +353,56 @@
 
 
     function updateAllOnScroll() {
-      var rect = section.getBoundingClientRect();
-      var totalScrollable = rect.height - vh;
-      
-      // 1. FASE 1: Revelado de la máscara (ocurre mientras rect.top va de vh a 0)
-      var revealProgress = Math.max(0, Math.min(1, (vh - rect.top) / vh));
-      var revealInset = (1 - revealProgress) * 100;
-      mask.style.clipPath = 'inset(' + revealInset + '% 0 0 0)';
+    var rect = section.getBoundingClientRect();
+    var totalScrollable = rect.height - vh;
+    
+    // Fase 1: revelado
+    var revealProgress = Math.max(0, Math.min(1, (vh - rect.top) / vh));
+    mask.style.clipPath = 'inset(' + ((1 - revealProgress) * 100) + '% 0 0 0)';
 
-      // Si la sección no ha llegado a fijarse arriba (rect.top > 0), mantenemos el contenido estático
-      if (rect.top > 0) {
-        inner.style.transform = 'translateY(0px)';
-        if (blackholeImg) {
-          blackholeImg.src = frameSrc(0);
-        }
-        for (var i = 0; i < cards.length; i++) {
-          cards[i].style.transform = 'scale(1)';
-        }
-        ticking = false;
-        return;
-      }
-
-      // Si la sección ya salió por completo de la pantalla, no hacemos nada
-      if (rect.bottom < 0) {
-        ticking = false;
-        return;
-      }
-
-      // 2. FASE 2: Movimiento de las tarjetas y Agujero Negro (mientras la sección está sticky)
-      var scrolled = -rect.top;
-      var progress = Math.max(0, Math.min(1, scrolled / totalScrollable));
-
-      // --- DESLIZAMIENTO ARTIFICIAL DE TARJETAS (translateY) ---
-      var innerHeight = inner.scrollHeight;
-      var maxTranslate = Math.max(0, innerHeight - vh + 100);
-      var currentTranslate = progress * maxTranslate;
-      inner.style.transform = 'translateY(-' + currentTranslate + 'px)';
-
-      // --- ANIMACIÓN DEL AGUJERO NEGRO (Frames) ---
-      if (blackholeImg) {
-        var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.round(progress * (TOTAL_FRAMES - 1)));
-        if (frameIndex !== currentFrame) {
-          currentFrame = frameIndex;
-          if (frameCache[frameIndex]) {
-            blackholeImg.src = frameCache[frameIndex].src;
-          } else {
-            blackholeImg.src = frameSrc(frameIndex);
-          }
-        }
-      }
-
-      // --- EFECTO DE ESCALA EN LAS TARJETAS (Scale Zoom) ---
-      var centerViewport = vh / 2;
-      var range = 300;
-
-      for (var i = 0; i < cards.length; i++) {
-        var card = cards[i];
-        var cardCenter = card.offsetTop + card.offsetHeight / 2 - currentTranslate;
-        var distance = Math.abs(centerViewport - cardCenter);
-        var scaleProgress = Math.min(1, distance / range);
-        var scale = 1 - (1 - 0.7) * scaleProgress;
-        card.style.transform = 'scale(' + scale.toFixed(3) + ')';
-      }
-
+    if (rect.top > 0) {
+      inner.style.transform = 'translateY(0px)';
+      if (blackholeImg) blackholeImg.src = frameSrc(0);
+      for (var i = 0; i < cards.length; i++) cards[i].style.transform = 'scale(1)';
       ticking = false;
+      return;
     }
+
+    if (rect.bottom < 0) { ticking = false; return; }
+
+    // Fase 2: scroll dentro de la sección
+    var scrolled = -rect.top;
+    var scrollProgress = Math.max(0, Math.min(1, scrolled / totalScrollable));
+
+    // ⬇️ Recalcular maxTranslate en cada tick (clave en móvil)
+    var innerHeight = inner.scrollHeight;
+    var maxTranslate = Math.max(0, innerHeight - vh + 100);
+    var currentTranslate = scrollProgress * maxTranslate;
+    inner.style.transform = 'translateY(-' + currentTranslate + 'px)';
+
+    // ⬇️ Frame basado en translateProgress, no en scrollProgress
+    if (blackholeImg) {
+      var translateProgress = maxTranslate > 0 ? currentTranslate / maxTranslate : scrollProgress;
+      var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.round(translateProgress * (TOTAL_FRAMES - 1)));
+      if (frameIndex !== currentFrame) {
+        currentFrame = frameIndex;
+        blackholeImg.src = frameCache[frameIndex] ? frameCache[frameIndex].src : frameSrc(frameIndex);
+      }
+    }
+
+    // Escala de tarjetas (sin cambios)
+    var centerViewport = vh / 2;
+    var range = 300;
+    for (var i = 0; i < cards.length; i++) {
+      var card = cards[i];
+      var cardCenter = card.offsetTop + card.offsetHeight / 2 - currentTranslate;
+      var distance = Math.abs(centerViewport - cardCenter);
+      var scale = 1 - (0.3 * Math.min(1, distance / range));
+      card.style.transform = 'scale(' + scale.toFixed(3) + ')';
+    }
+
+    ticking = false;
+  }
 
     // Escuchamos únicamente al scroll nativo de la ventana principal
     window.addEventListener('scroll', function () {
