@@ -296,18 +296,32 @@
 
     if (!section || !mask || !inner || cards.length === 0) return;
 
-    var ticking = false;
-    var vh = window.innerHeight;
-
-    // Parámetros de Agujero Negro
     var TOTAL_FRAMES = 96;
     var FRAME_STEP = 8;
     var BASE_PATH = '/assets/blackhole/';
-    var currentFrame = -1;
+    var CARD_SCALE_RANGE = 300;
+    var CARD_SCALE_STRENGTH = 0.3;
+    var EXTRA_SCROLL_OFFSET = 100;
 
-    /* --- Caché de Fotogramas --- */
+    var ticking = false;
+    var vh = window.innerHeight;
+    var currentFrame = -1;
     var frameCache = {};
     var preloadStarted = false;
+    var metrics = {
+      sectionTop: 0,
+      sectionHeight: 0,
+      totalScrollable: 1,
+      maxTranslate: 0
+    };
+
+    function getScrollY() {
+      return window.scrollY || window.pageYOffset || 0;
+    }
+
+    function clamp01(value) {
+      return Math.max(0, Math.min(1, value));
+    }
 
     function padFrame(n) {
       var s = '00000' + n;
@@ -319,7 +333,34 @@
       return BASE_PATH + 'scene' + padFrame(frameNum) + '.webp';
     }
 
-    // Precarga agresiva cuando la sección está cerca
+    function getAbsoluteTop(el) {
+      var top = 0;
+      var node = el;
+      while (node) {
+        top += node.offsetTop || 0;
+        node = node.offsetParent;
+      }
+      return top;
+    }
+
+    function recalcMetrics() {
+      var prevTransform = inner.style.transform;
+      inner.style.transform = 'translateY(0px)';
+      metrics.sectionTop = getAbsoluteTop(section);
+      metrics.sectionHeight = section.offsetHeight;
+      metrics.totalScrollable = Math.max(1, metrics.sectionHeight - vh);
+      metrics.maxTranslate = Math.max(0, inner.scrollHeight - vh + EXTRA_SCROLL_OFFSET);
+      inner.style.transform = prevTransform;
+    }
+
+    function setFrameByProgress(progress) {
+      if (!blackholeImg) return;
+      var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.round(progress * (TOTAL_FRAMES - 1)));
+      if (frameIndex === currentFrame) return;
+      currentFrame = frameIndex;
+      blackholeImg.src = frameCache[frameIndex] ? frameCache[frameIndex].src : frameSrc(frameIndex);
+    }
+
     function preloadAllFrames() {
       if (preloadStarted) return;
       preloadStarted = true;
@@ -328,15 +369,6 @@
           var img = new Image();
           img.onload = function () {
             frameCache[idx] = img;
-          };
-          img.onerror = function () {
-            setTimeout(function () {
-              var retry = new Image();
-              retry.onload = function () {
-                frameCache[idx] = retry;
-              };
-              retry.src = frameSrc(idx);
-            }, 2000);
           };
           img.src = frameSrc(idx);
         })(i);
@@ -351,156 +383,70 @@
     }, { rootMargin: '1500px 0px 0px 0px' });
     preloadObserver.observe(section);
 
-    var cachedMaxTranslate = -1;
-    var stableScrollProgress = 0;
-    var lastScrollY = window.scrollY || window.pageYOffset || 0;
+    function applyTransforms(progress, inSection) {
+      var currentTranslate = progress * metrics.maxTranslate;
+      inner.style.transform = 'translateY(-' + currentTranslate + 'px)';
+      setFrameByProgress(progress);
 
-    function getScrollY() {
-      return window.scrollY || window.pageYOffset || 0;
-    }
-
-    function clamp01(value) {
-      return Math.max(0, Math.min(1, value));
-    }
-
-    function getMaxTranslate() {
-      if (cachedMaxTranslate < 0) {
-        // Medir SIN transform activo para evitar que el layout se contamine
-        var prevTransform = inner.style.transform;
-        inner.style.transform = 'translateY(0px)';
-        cachedMaxTranslate = Math.max(0, inner.scrollHeight - vh + 100);
-        inner.style.transform = prevTransform;
+      var centerViewport = vh / 2;
+      for (var i = 0; i < cards.length; i++) {
+        var card = cards[i];
+        if (!inSection) {
+          card.style.transform = 'scale(1)';
+          continue;
+        }
+        var cardCenter = card.offsetTop + card.offsetHeight / 2 - currentTranslate;
+        var distance = Math.abs(centerViewport - cardCenter);
+        var scale = 1 - (CARD_SCALE_STRENGTH * Math.min(1, distance / CARD_SCALE_RANGE));
+        card.style.transform = 'scale(' + scale.toFixed(3) + ')';
       }
-      return cachedMaxTranslate;
-  }
-
+    }
 
     function updateAllOnScroll() {
-    var scrollY = getScrollY();
-    var sectionTop = section.offsetTop;
-    var sectionHeight = section.offsetHeight;
-    var sectionBottom = sectionTop + sectionHeight;
-    var sectionTopInViewport = sectionTop - scrollY;
-    var totalScrollable = Math.max(1, sectionHeight - vh);
+      var scrollY = getScrollY();
+      var sectionTopInViewport = metrics.sectionTop - scrollY;
+      var revealProgress = clamp01((vh - sectionTopInViewport) / vh);
+      mask.style.clipPath = 'inset(' + ((1 - revealProgress) * 100) + '% 0 0 0)';
 
-    // Fase 1: revelado
-    var revealProgress = clamp01((vh - sectionTopInViewport) / vh);
-    mask.style.clipPath = 'inset(' + ((1 - revealProgress) * 100) + '% 0 0 0)';
+      var rawProgress = (scrollY - metrics.sectionTop) / metrics.totalScrollable;
+      var progress = clamp01(rawProgress);
+      var inSection = progress > 0 && progress < 1;
 
-    if (scrollY < sectionTop) {
-      stableScrollProgress = 0;
-      inner.style.transform = 'translateY(0px)';
-      if (blackholeImg && currentFrame !== 0) {
-        currentFrame = 0;
-        blackholeImg.src = frameSrc(0);
-      }
-      for (var i = 0; i < cards.length; i++) cards[i].style.transform = 'scale(1)';
-      lastScrollY = scrollY;
+      applyTransforms(progress, inSection);
       ticking = false;
-      return;
     }
 
-    if (scrollY > sectionBottom) {
-      stableScrollProgress = 1;
-      lastScrollY = scrollY;
-      ticking = false;
-      return;
+    function requestUpdate() {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(updateAllOnScroll);
     }
 
-    // Fase 2: scroll dentro de la sección
-    var rawProgress = clamp01((scrollY - sectionTop) / totalScrollable);
-    var direction = scrollY - lastScrollY;
-    var EPSILON = 0.0005;
-    var scrollProgress = rawProgress;
-
-    // Android Chrome puede reportar retrocesos breves; estabilizamos por dirección real.
-    if (direction > 0) {
-      scrollProgress = Math.max(stableScrollProgress, rawProgress - EPSILON);
-    } else if (direction < 0) {
-      scrollProgress = Math.min(stableScrollProgress, rawProgress + EPSILON);
-    } else {
-      scrollProgress = stableScrollProgress;
-    }
-
-    scrollProgress = clamp01(scrollProgress);
-    stableScrollProgress = scrollProgress;
-    lastScrollY = scrollY;
-
-    // ⬇️ Recalcular maxTranslate en cada tick (clave en móvil)
-    var maxTranslate = getMaxTranslate();
-    var currentTranslate = scrollProgress * maxTranslate;
-    inner.style.transform = 'translateY(-' + currentTranslate + 'px)';
-
-    // ⬇️ Frame basado en translateProgress, no en scrollProgress
-    if (blackholeImg) {
-      var translateProgress = maxTranslate > 0 ? currentTranslate / maxTranslate : scrollProgress;
-      var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.round(translateProgress * (TOTAL_FRAMES - 1)));
-      if (frameIndex !== currentFrame) {
-        currentFrame = frameIndex;
-        blackholeImg.src = frameCache[frameIndex] ? frameCache[frameIndex].src : frameSrc(frameIndex);
-      }
-    }
-
-    // Escala de tarjetas (sin cambios)
-    var centerViewport = vh / 2;
-    var range = 300;
-    for (var i = 0; i < cards.length; i++) {
-      var card = cards[i];
-      var cardCenter = card.offsetTop + card.offsetHeight / 2 - currentTranslate;
-      var distance = Math.abs(centerViewport - cardCenter);
-      var scale = 1 - (0.3 * Math.min(1, distance / range));
-      card.style.transform = 'scale(' + scale.toFixed(3) + ')';
-    }
-
-    ticking = false;
-  }
-
-    // Escuchamos únicamente al scroll nativo de la ventana principal
-    window.addEventListener('scroll', function () {
-      if (!ticking) {
-        requestAnimationFrame(updateAllOnScroll);
-        ticking = true;
-      }
-    }, { passive: true });
+    window.addEventListener('scroll', requestUpdate, { passive: true });
 
     window.addEventListener('resize', function () {
-    vh = window.innerHeight;
-      cachedMaxTranslate = -1;   // ← forzar re-medición
+      vh = window.innerHeight;
       currentFrame = -1;
-      stableScrollProgress = 0;
-      lastScrollY = getScrollY();
-      if (!ticking) {
-        requestAnimationFrame(updateAllOnScroll);
-        ticking = true;
-      }
+      recalcMetrics();
+      requestUpdate();
     }, { passive: true });
 
+    recalcMetrics();
     updateAllOnScroll();
 
-    // --- LOGICA DE BOTONES SIGUIENTE Y ANTERIOR --- 
     var navBtns = mask ? Array.from(mask.querySelectorAll('.step-next-btn, .step-prev-btn')) : [];
-    navBtns.forEach(function(btn) {
-      btn.addEventListener('click', function(e) {
+    navBtns.forEach(function (btn) {
+      btn.addEventListener('click', function (e) {
         e.preventDefault();
         var targetIndex = parseInt(btn.getAttribute('data-target'), 10);
-        if (isNaN(targetIndex)) return;
+        if (isNaN(targetIndex) || !cards[targetIndex]) return;
 
-        var rect = section.getBoundingClientRect();
-        var absoluteTop = window.scrollY + rect.top;
-        var totalScrollable = rect.height - vh;
-        var maxTranslate = Math.max(0, inner.scrollHeight - vh + 100);
+        var targetCard = cards[targetIndex];
+        var desiredTranslate = targetCard.offsetTop + targetCard.offsetHeight / 2 - vh / 2;
+        var progress = metrics.maxTranslate > 0 ? desiredTranslate / metrics.maxTranslate : 0;
+        progress = clamp01(progress);
+        var targetScrollY = metrics.sectionTop + progress * metrics.totalScrollable;
 
-        var progress = 1; // Default to end of section if index is out of bounds
-        
-        if (cards[targetIndex]) {
-          var targetCard = cards[targetIndex];
-          var desiredTranslate = targetCard.offsetTop + targetCard.offsetHeight / 2 - vh / 2;
-          progress = maxTranslate > 0 ? desiredTranslate / maxTranslate : 0;
-        }
-
-        progress = Math.max(0, Math.min(1, progress));
-        var targetScrollY = absoluteTop + progress * totalScrollable;
-        
         window.scrollTo({
           top: targetScrollY,
           behavior: 'smooth'
