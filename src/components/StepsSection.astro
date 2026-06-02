@@ -352,6 +352,16 @@
     preloadObserver.observe(section);
 
     var cachedMaxTranslate = -1;
+    var stableScrollProgress = 0;
+    var lastScrollY = window.scrollY || window.pageYOffset || 0;
+
+    function getScrollY() {
+      return window.scrollY || window.pageYOffset || 0;
+    }
+
+    function clamp01(value) {
+      return Math.max(0, Math.min(1, value));
+    }
 
     function getMaxTranslate() {
       if (cachedMaxTranslate < 0) {
@@ -366,26 +376,55 @@
 
 
     function updateAllOnScroll() {
-    var rect = section.getBoundingClientRect();
-    var totalScrollable = rect.height - vh;
-    
+    var scrollY = getScrollY();
+    var sectionTop = section.offsetTop;
+    var sectionHeight = section.offsetHeight;
+    var sectionBottom = sectionTop + sectionHeight;
+    var sectionTopInViewport = sectionTop - scrollY;
+    var totalScrollable = Math.max(1, sectionHeight - vh);
+
     // Fase 1: revelado
-    var revealProgress = Math.max(0, Math.min(1, (vh - rect.top) / vh));
+    var revealProgress = clamp01((vh - sectionTopInViewport) / vh);
     mask.style.clipPath = 'inset(' + ((1 - revealProgress) * 100) + '% 0 0 0)';
 
-    if (rect.top > 0) {
+    if (scrollY < sectionTop) {
+      stableScrollProgress = 0;
       inner.style.transform = 'translateY(0px)';
-      if (blackholeImg) blackholeImg.src = frameSrc(0);
+      if (blackholeImg && currentFrame !== 0) {
+        currentFrame = 0;
+        blackholeImg.src = frameSrc(0);
+      }
       for (var i = 0; i < cards.length; i++) cards[i].style.transform = 'scale(1)';
+      lastScrollY = scrollY;
       ticking = false;
       return;
     }
 
-    if (rect.bottom < 0) { ticking = false; return; }
+    if (scrollY > sectionBottom) {
+      stableScrollProgress = 1;
+      lastScrollY = scrollY;
+      ticking = false;
+      return;
+    }
 
     // Fase 2: scroll dentro de la sección
-    var scrolled = -rect.top;
-    var scrollProgress = Math.max(0, Math.min(1, scrolled / totalScrollable));
+    var rawProgress = clamp01((scrollY - sectionTop) / totalScrollable);
+    var direction = scrollY - lastScrollY;
+    var EPSILON = 0.0005;
+    var scrollProgress = rawProgress;
+
+    // Android Chrome puede reportar retrocesos breves; estabilizamos por dirección real.
+    if (direction > 0) {
+      scrollProgress = Math.max(stableScrollProgress, rawProgress - EPSILON);
+    } else if (direction < 0) {
+      scrollProgress = Math.min(stableScrollProgress, rawProgress + EPSILON);
+    } else {
+      scrollProgress = stableScrollProgress;
+    }
+
+    scrollProgress = clamp01(scrollProgress);
+    stableScrollProgress = scrollProgress;
+    lastScrollY = scrollY;
 
     // ⬇️ Recalcular maxTranslate en cada tick (clave en móvil)
     var maxTranslate = getMaxTranslate();
@@ -428,6 +467,8 @@
     vh = window.innerHeight;
       cachedMaxTranslate = -1;   // ← forzar re-medición
       currentFrame = -1;
+      stableScrollProgress = 0;
+      lastScrollY = getScrollY();
       if (!ticking) {
         requestAnimationFrame(updateAllOnScroll);
         ticking = true;
