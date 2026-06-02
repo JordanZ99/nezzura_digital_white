@@ -9,6 +9,7 @@
     z-index: 4;
     box-sizing: border-box;
     min-height: 300vh;
+    margin-top: -200vh;
   }
 
 
@@ -237,9 +238,6 @@
     var ticking = false;
     var vh = window.innerHeight;
 
-    // Parámetros de animación
-    var REVEAL_LIMIT = 0.3; // El revelado termina al 30% del scroll global
-
     // Parámetros de Agujero Negro
     var isMobile = window.innerWidth < 900;
     var TOTAL_FRAMES = isMobile ? 55 : 72;
@@ -301,36 +299,43 @@
       var rect = section.getBoundingClientRect();
       var totalScrollable = rect.height - vh;
       
-      // Si la sección no está en pantalla, no hacemos cálculos
-      if (rect.top > vh || rect.bottom < 0) {
+      // 1. FASE 1: Revelado de la máscara (ocurre mientras rect.top va de vh a 0)
+      var revealProgress = Math.max(0, Math.min(1, (vh - rect.top) / vh));
+      var revealInset = (1 - revealProgress) * 100;
+      mask.style.clipPath = 'inset(' + revealInset + '% 0 0 0)';
+
+      // Si la sección no ha llegado a fijarse arriba (rect.top > 0), mantenemos el contenido estático
+      if (rect.top > 0) {
+        inner.style.transform = 'translateY(0px)';
+        if (blackholeImg) {
+          blackholeImg.src = frameSrc(0);
+        }
+        for (var i = 0; i < cards.length; i++) {
+          cards[i].style.transform = 'scale(1)';
+        }
         ticking = false;
         return;
       }
 
-      // 1. Calcular el progreso global (de 0 a 1)
-      var scrolled = -rect.top;
-      var globalProgress = Math.max(0, Math.min(1, scrolled / totalScrollable));
-
-      // 2. FASE 1: Revelado de la máscara (0% al 30% del scroll)
-      var revealProgress = Math.min(1, globalProgress / REVEAL_LIMIT);
-      var revealInset = (1 - revealProgress) * 100;
-      mask.style.clipPath = 'inset(' + revealInset + '% 0 0 0)';
-
-      // 3. FASE 2: Movimiento de las tarjetas y Agujero Negro (30% al 100% del scroll)
-      var contentProgress = 0;
-      if (globalProgress > REVEAL_LIMIT) {
-        contentProgress = (globalProgress - REVEAL_LIMIT) / (1 - REVEAL_LIMIT);
+      // Si la sección ya salió por completo de la pantalla, no hacemos nada
+      if (rect.bottom < 0) {
+        ticking = false;
+        return;
       }
+
+      // 2. FASE 2: Movimiento de las tarjetas y Agujero Negro (mientras la sección está sticky)
+      var scrolled = -rect.top;
+      var progress = Math.max(0, Math.min(1, scrolled / totalScrollable));
 
       // --- DESLIZAMIENTO ARTIFICIAL DE TARJETAS (translateY) ---
       var innerHeight = inner.scrollHeight;
       var maxTranslate = Math.max(0, innerHeight - vh + 100);
-      var currentTranslate = contentProgress * maxTranslate;
+      var currentTranslate = progress * maxTranslate;
       inner.style.transform = 'translateY(-' + currentTranslate + 'px)';
 
       // --- ANIMACIÓN DEL AGUJERO NEGRO (Frames) ---
       if (blackholeImg) {
-        var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.round(contentProgress * (TOTAL_FRAMES - 1)));
+        var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.round(progress * (TOTAL_FRAMES - 1)));
         if (frameIndex !== currentFrame) {
           currentFrame = frameIndex;
           if (frameCache[frameIndex]) {
