@@ -351,6 +351,19 @@
     }, { rootMargin: '1500px 0px 0px 0px' });
     preloadObserver.observe(section);
 
+    var cachedMaxTranslate = -1;
+
+    function getMaxTranslate() {
+      if (cachedMaxTranslate < 0) {
+        // Medir SIN transform activo para evitar que el layout se contamine
+        var prevTransform = inner.style.transform;
+        inner.style.transform = 'translateY(0px)';
+        cachedMaxTranslate = Math.max(0, inner.scrollHeight - vh + 100);
+        inner.style.transform = prevTransform;
+      }
+      return cachedMaxTranslate;
+  }
+
 
     function updateAllOnScroll() {
     var rect = section.getBoundingClientRect();
@@ -375,8 +388,7 @@
     var scrollProgress = Math.max(0, Math.min(1, scrolled / totalScrollable));
 
     // ⬇️ Recalcular maxTranslate en cada tick (clave en móvil)
-    var innerHeight = inner.scrollHeight;
-    var maxTranslate = Math.max(0, innerHeight - vh + 100);
+    var maxTranslate = getMaxTranslate();
     var currentTranslate = scrollProgress * maxTranslate;
     inner.style.transform = 'translateY(-' + currentTranslate + 'px)';
 
@@ -413,7 +425,9 @@
     }, { passive: true });
 
     window.addEventListener('resize', function () {
-      vh = window.innerHeight;
+    vh = window.innerHeight;
+      cachedMaxTranslate = -1;   // ← forzar re-medición
+      currentFrame = -1;
       if (!ticking) {
         requestAnimationFrame(updateAllOnScroll);
         ticking = true;
