@@ -239,10 +239,9 @@
     var vh = window.innerHeight;
 
     // Parámetros de Agujero Negro
-    var isMobile = window.innerWidth < 900;
-    var TOTAL_FRAMES = isMobile ? 55 : 72;
-    var FRAME_STEP = isMobile ? 12 : 2;
-    var BASE_PATH = isMobile ? '/assets/blackholeMovil/' : '/assets/blackhole/';
+    var TOTAL_FRAMES = 72;
+    var FRAME_STEP = 2;
+    var BASE_PATH = '/assets/blackhole/';
     var currentFrame = -1;
 
     /* --- Caché de Fotogramas --- */
@@ -291,9 +290,6 @@
     }, { rootMargin: '1500px 0px 0px 0px' });
     preloadObserver.observe(section);
 
-    if (isMobile && blackholeImg) {
-      blackholeImg.src = frameSrc(0);
-    }
 
     function updateAllOnScroll() {
       var rect = section.getBoundingClientRect();
@@ -372,17 +368,6 @@
 
     window.addEventListener('resize', function () {
       vh = window.innerHeight;
-      var newIsMobile = window.innerWidth < 900;
-      if (newIsMobile !== isMobile) {
-        isMobile = newIsMobile;
-        TOTAL_FRAMES = isMobile ? 55 : 72;
-        FRAME_STEP = isMobile ? 12 : 2;
-        BASE_PATH = isMobile ? '/assets/blackholeMovil/' : '/assets/blackhole/';
-        currentFrame = -1;
-        frameCache = {};
-        preloadStarted = false;
-        preloadAllFrames();
-      }
       if (!ticking) {
         requestAnimationFrame(updateAllOnScroll);
         ticking = true;
