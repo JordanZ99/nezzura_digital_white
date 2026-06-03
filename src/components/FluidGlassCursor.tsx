@@ -68,10 +68,24 @@ export default function FluidGlassCursor() {
 
     document.body.classList.add('glass-cursor-active');
 
+    // Hide cursor when hovering over form inputs/textareas
+    const isFormField = (el: Element | null) => {
+      if (!el) return false;
+      return el.matches('input, textarea, select') || (el as HTMLElement).contentEditable === 'true';
+    };
+
     // Track raw mouse position
     const onMove = (e: MouseEvent) => {
       target.current.x = e.clientX;
       target.current.y = e.clientY;
+
+      // Hide glass cursor over form fields
+      if (cursorRef.current) {
+        const overField = isFormField(e.target as Element) || !!(e.target as Element)?.closest?.('input, textarea, select, [contenteditable]');
+        cursorRef.current.style.backdropFilter = overField ? 'none' : 'url(#gc-filter) brightness(1.06) saturate(1.15)';
+        cursorRef.current.style.webkitBackdropFilter = overField ? 'none' : 'url(#gc-filter) brightness(1.06) saturate(1.15)';
+        cursorRef.current.style.opacity = overField ? '0' : '1';
+      }
     };
 
     // Smooth lerp animation loop
@@ -145,6 +159,7 @@ export default function FluidGlassCursor() {
       {/* ─── The glass cursor element ─── */}
       <div
         ref={cursorRef}
+        id="glass-cursor"
         aria-hidden="true"
         style={{
           position: 'fixed',
