@@ -176,7 +176,7 @@
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 500;
     font-size: clamp(24px, 2vw, 40px);
-    color: #888888;
+    color: #535353ff;
     margin: 0 0 12px 0;
     line-height: 1;
     text-transform: uppercase;
@@ -196,7 +196,7 @@
     font-weight: 400;
     font-size: clamp(13px, 0.9vw, 16px);
     line-height: 1.6;
-    color: #555555;
+    color: #1b1b1bff;
     margin: 0;
     text-transform: uppercase;
   }
@@ -279,6 +279,9 @@
             <p class="step-num">04</p>
             <p class="step-title">Lanzamiento y soporte continuo</p>
             <p class="step-desc">Tu software sale al mundo de forma segura. Te incluimos 30 d&iacute;as de soporte real gratis y te dejamos configurado el plan de mantenimiento cloud para que tu negocio nunca deje de funcionar.</p>
+            <button class="step-next-btn" data-target="cotizacion-section" aria-label="Siguiente sección">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 12 16 22 8"></polyline></svg>
+            </button>
           </div>
         </div>
       </div>
@@ -434,23 +437,46 @@
     recalcMetrics();
     updateAllOnScroll();
 
+    // --- MANEJO DE CLICKS UNIFICADO ---
     var navBtns = mask ? Array.from(mask.querySelectorAll('.step-next-btn, .step-prev-btn')) : [];
     navBtns.forEach(function (btn) {
       btn.addEventListener('click', function (e) {
         e.preventDefault();
-        var targetIndex = parseInt(btn.getAttribute('data-target'), 10);
-        if (isNaN(targetIndex) || !cards[targetIndex]) return;
+        var targetValue = btn.getAttribute('data-target');
+        if (!targetValue) return;
 
-        var targetCard = cards[targetIndex];
-        var desiredTranslate = targetCard.offsetTop + targetCard.offsetHeight / 2 - vh / 2;
-        var progress = metrics.maxTranslate > 0 ? desiredTranslate / metrics.maxTranslate : 0;
-        progress = clamp01(progress);
-        var targetScrollY = metrics.sectionTop + progress * metrics.totalScrollable;
+        var targetIndex = parseInt(targetValue, 10);
 
-        window.scrollTo({
-          top: targetScrollY,
-          behavior: 'smooth'
-        });
+        if (isNaN(targetIndex)) {
+          // Si no es número, tratamos el valor como un ID de sección externa
+          var targetSection = document.getElementById(targetValue);
+          if (targetSection) {
+            var offset = 60; // Margen superior opcional
+            var bodyRect = document.body.getBoundingClientRect().top;
+            var elementRect = targetSection.getBoundingClientRect().top;
+            var elementPosition = elementRect - bodyRect;
+            var offsetPosition = elementPosition - offset;
+
+            window.scrollTo({
+              top: offsetPosition,
+              behavior: 'smooth'
+            });
+          }
+        } else {
+          // Si es un número válido, ejecuta la lógica de scroll interno por tarjetas
+          if (!cards[targetIndex]) return;
+
+          var targetCard = cards[targetIndex];
+          var desiredTranslate = targetCard.offsetTop + targetCard.offsetHeight / 2 - vh / 2;
+          var progress = metrics.maxTranslate > 0 ? desiredTranslate / metrics.maxTranslate : 0;
+          progress = clamp01(progress);
+          var targetScrollY = metrics.sectionTop + progress * metrics.totalScrollable;
+
+          window.scrollTo({
+            top: targetScrollY,
+            behavior: 'smooth'
+          });
+        }
       });
     });
   })();
