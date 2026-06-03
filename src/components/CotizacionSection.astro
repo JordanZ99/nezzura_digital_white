@@ -1,8 +1,9 @@
 <style>
   #cotizacion-section {
-    background: #000000ff;
+    background: #000000;
     width: 100%;
-    padding: clamp(100px, 10vh, 160px) 40px clamp(120px, 12vh, 180px);
+    position: relative;
+    overflow: hidden;
     box-sizing: border-box;
   }
 
@@ -10,11 +11,15 @@
     max-width: 1100px;
     width: 100%;
     margin: 0 auto;
+    position: relative;
+    z-index: 1;
+    padding: clamp(80px, 10vh, 140px) 40px clamp(80px, 10vh, 140px);
+    box-sizing: border-box;
   }
 
   #cotizacion-section .cotizacion-header {
     text-align: center;
-    margin-bottom: 80px;
+    margin-bottom: clamp(40px, 6vh, 80px);
   }
 
   #cotizacion-section .cotizacion-header h2 {
@@ -38,82 +43,165 @@
     letter-spacing: 0.1em;
   }
 
-  #cotizacion-section .cotizacion-cards {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 24px;
+  #cotizacion-section .cotizacion-content {
+    display: flex;
+    align-items: center;
+    gap: clamp(32px, 4vw, 64px);
   }
 
-  #cotizacion-section .cotizacion-card {
-    background: transparent;
-    border: none;
-    padding: 36px 32px;
+  #cotizacion-section .cotizacion-image {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #cotizacion-section .cotizacion-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 16px;
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.4);
+  }
+
+  #cotizacion-section .cotizacion-accordion {
+    flex: 1;
+    min-width: 0;
     display: flex;
     flex-direction: column;
+    gap: 12px;
   }
 
-  #cotizacion-section .cotizacion-card .card-title {
+  #cotizacion-section .accordion-item {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 16px;
+    overflow: hidden;
+    transition: background 0.3s ease, border-color 0.3s ease;
+  }
+
+  #cotizacion-section .accordion-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.18);
+  }
+
+  #cotizacion-section .accordion-item.active {
+    background: rgba(255, 255, 255, 0.12);
+    border-color: rgba(255, 255, 255, 0.22);
+  }
+
+  #cotizacion-section .accordion-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 22px 24px;
+    cursor: pointer;
+    user-select: none;
+    background: none;
+    border: none;
+    width: 100%;
+    text-align: left;
+    color: inherit;
+    font-family: inherit;
+  }
+
+  #cotizacion-section .accordion-header:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: -2px;
+    border-radius: 16px;
+  }
+
+  #cotizacion-section .accordion-title {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 600;
-    font-size: clamp(16px, 1.1vw, 20px);
-    color: #ffffffff;
-    margin: 0 0 16px 0;
-    padding-bottom: 14px;
-    border-bottom: 1px solid #939393ff;
+    font-size: clamp(14px, 1.1vw, 18px);
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0;
     text-transform: uppercase;
     letter-spacing: 0.03em;
+    flex: 1;
+    transition: color 0.3s ease;
   }
 
-  #cotizacion-section .cotizacion-card .card-desc {
+  #cotizacion-section .accordion-item.active .accordion-title {
+    color: #ffffff;
+  }
+
+  #cotizacion-section .accordion-icon {
+    width: 20px;
+    height: 20px;
+    flex-shrink: 0;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    color: rgba(255, 255, 255, 0.4);
+  }
+
+  #cotizacion-section .accordion-item.active .accordion-icon {
+    transform: rotate(180deg);
+    color: #ffffff;
+  }
+
+  #cotizacion-section .accordion-body {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+                padding 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  #cotizacion-section .accordion-item.active .accordion-body {
+    max-height: 400px;
+  }
+
+  #cotizacion-section .accordion-body-inner {
+    padding: 0 24px 24px 24px;
+  }
+
+  #cotizacion-section .card-desc {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 700;
-    font-size: clamp(13px, 0.85vw, 15px);
+    font-size: clamp(12px, 0.8vw, 14px);
     line-height: 1.7;
-    color: #e8e8e8ff;
-    margin: 0 0 24px 0;
-    flex: 1;
+    color: #e8e8e8;
+    margin: 0 0 18px 0;
     text-transform: uppercase;
   }
 
-  #cotizacion-section .cotizacion-card .card-price {
+  #cotizacion-section .card-price {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 600;
-    font-size: clamp(22px, 1.8vw, 32px);
-    color: #ffffffff;
+    font-size: clamp(20px, 1.6vw, 28px);
+    color: #ffffff;
     margin: 0 0 4px 0;
     letter-spacing: 0.02em;
     text-transform: uppercase;
   }
 
-  #cotizacion-section .cotizacion-card .card-time {
+  #cotizacion-section .card-time {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 500;
-    font-size: clamp(12px, 0.75vw, 14px);
-    color: #ffffffff;
-    margin: 0 0 6px 0;
+    font-size: clamp(11px, 0.7vw, 13px);
+    color: #ffffff;
+    margin: 0;
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
 
-  #cotizacion-section .cotizacion-card .card-includes {
+  #cotizacion-section .card-includes {
     font-family: system-ui, -apple-system, sans-serif;
     font-weight: 700;
-    font-size: clamp(12px, 0.75vw, 14px);
-    color: #ffffffff;
+    font-size: clamp(11px, 0.7vw, 13px);
+    color: #ffffff;
     margin: 16px 0 0 0;
     padding-top: 14px;
-    border-top: 1px solid #999999ff;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
     line-height: 1.6;
     text-transform: uppercase;
   }
 
-  #cotizacion-section .cotizacion-card .card-includes strong {
-    color: #b3b3b3ff;
+  #cotizacion-section .card-includes strong {
+    color: #b3b3b3;
     font-weight: 700;
   }
 
   @media (max-width: 768px) {
-    #cotizacion-section {
+    #cotizacion-section .cotizacion-inner {
       padding: 80px 24px;
     }
 
@@ -121,21 +209,23 @@
       margin-bottom: 40px;
     }
 
-    #cotizacion-section .cotizacion-header h2 {
-      font-size: clamp(24px, 7vw, 32px);
+    #cotizacion-section .cotizacion-content {
+      flex-direction: column-reverse;
+      gap: 32px;
     }
 
-    #cotizacion-section .cotizacion-header .cotizacion-sub {
-      font-size: clamp(12px, 3vw, 15px);
+    #cotizacion-section .cotizacion-image img {
+      max-width: 320px;
+      margin: 0 auto;
     }
 
-    #cotizacion-section .cotizacion-cards {
-      grid-template-columns: 1fr;
-      gap: 0;
+    #cotizacion-section .accordion-header {
+      padding: 18px 20px;
+      gap: 12px;
     }
 
-    #cotizacion-section .cotizacion-card {
-      padding: 28px 0;
+    #cotizacion-section .accordion-body-inner {
+      padding: 0 20px 20px 20px;
     }
   }
 </style>
@@ -146,36 +236,96 @@
       <h2>LO QUE HACEMOS</h2>
       <p class="cotizacion-sub">SOLUCIONES DIGITALES QUE VENDEN</p>
     </div>
-    <div class="cotizacion-cards">
-      <div class="cotizacion-card">
-        <p class="card-title">LANDING PAGES PROFESIONALES</p>
-        <p class="card-desc">PARA NEGOCIOS QUE NECESITAN CAPTURAR CLIENTES DESDE EL PRIMER CLIC. RÁPIDAS, OPTIMIZADAS PARA GOOGLE Y DISEÑADAS PARA CONVERTIR VISITAS EN VENTAS.</p>
-        <p class="card-price">$4,899 MXN</p>
-        <p class="card-time">ENTREGA EN 5&ndash;7 DÍAS HÁBILES</p>
-        <p class="card-includes"><strong>INCLUYE GRATIS POR 1 AÑO:</strong><br />DOMINIO &middot; HOSTING</p>
+    <div class="cotizacion-content">
+      <div class="cotizacion-image">
+        <img src="/laptopGestor.jpg" alt="Nezzura Gestor" />
       </div>
+      <div class="cotizacion-accordion">
+        <div class="accordion-item active">
+          <button class="accordion-header" aria-expanded="true">
+            <span class="accordion-title">LANDING PAGES PROFESIONALES</span>
+            <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              <p class="card-desc">PARA NEGOCIOS QUE NECESITAN CAPTURAR CLIENTES DESDE EL PRIMER CLIC. RÁPIDAS, OPTIMIZADAS PARA GOOGLE Y DISEÑADAS PARA CONVERTIR VISITAS EN VENTAS.</p>
+              <p class="card-price">$4,899 MXN</p>
+              <p class="card-time">ENTREGA EN 5–7 DÍAS HÁBILES</p>
+              <p class="card-includes"><strong>INCLUYE GRATIS POR 1 AÑO:</strong><br />DOMINIO · HOSTING</p>
+            </div>
+          </div>
+        </div>
 
-      <div class="cotizacion-card">
-        <p class="card-title">PÁGINAS WEB COMPLETAS</p>
-        <p class="card-desc">PORTAFOLIOS, SITIOS DE EMPRESA, PLATAFORMAS DE RESERVAS, MENÚS INTERACTIVOS. ANIMACIONES Y DISEÑO DE ALTO ESTÁNDAR QUE ELEVAN TU MARCA. TODO A MEDIDA PARA QUE TENGA LA PRESENCIA QUE SE MERECE.</p>
-        <p class="card-price">DESDE $14,999 MXN</p>
-        <p class="card-time">ENTREGA EN 3&ndash;6 SEMANAS (SEGÚN LA COMPLEJIDAD)</p>
-        <p class="card-includes"><strong>INCLUYE GRATIS POR 1 AÑO:</strong><br />DOMINIO &middot; HOSTING</p>
-      </div>
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span class="accordion-title">PÁGINAS WEB COMPLETAS</span>
+            <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              <p class="card-desc">PORTAFOLIOS, SITIOS DE EMPRESA, PLATAFORMAS DE RESERVAS, MENÚS INTERACTIVOS. ANIMACIONES Y DISEÑO DE ALTO ESTÁNDAR QUE ELEVAN TU MARCA. TODO A MEDIDA PARA QUE TENGA LA PRESENCIA QUE SE MERECE.</p>
+              <p class="card-price">DESDE $14,999 MXN</p>
+              <p class="card-time">ENTREGA EN 3–6 SEMANAS (SEGÚN LA COMPLEJIDAD)</p>
+              <p class="card-includes"><strong>INCLUYE GRATIS POR 1 AÑO:</strong><br />DOMINIO · HOSTING</p>
+            </div>
+          </div>
+        </div>
 
-      <div class="cotizacion-card">
-        <p class="card-title">APLICACIONES WEB</p>
-        <p class="card-desc">¿TIENES UNA IDEA DE NEGOCIO QUE NECESITA SOFTWARE? LA CONSTRUIMOS. DESDE SISTEMAS INTERNOS PARA AUTOMATIZAR TAREAS Y AHORRARTE DINERO, HASTA PRODUCTOS DIGITALES LISTOS PARA VENDER.</p>
-        <p class="card-price">DESDE $48,000 MXN</p>
-        <p class="card-time">TIEMPO ESTIMADO: 1 A 3 MESES</p>
-      </div>
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span class="accordion-title">APLICACIONES WEB</span>
+            <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              <p class="card-desc">¿TIENES UNA IDEA DE NEGOCIO QUE NECESITA SOFTWARE? LA CONSTRUIMOS. DESDE SISTEMAS INTERNOS PARA AUTOMATIZAR TAREAS Y AHORRARTE DINERO, HASTA PRODUCTOS DIGITALES LISTOS PARA VENDER.</p>
+              <p class="card-price">DESDE $48,000 MXN</p>
+              <p class="card-time">TIEMPO ESTIMADO: 1 A 3 MESES</p>
+            </div>
+          </div>
+        </div>
 
-      <div class="cotizacion-card">
-        <p class="card-title">MANTENIMIENTO Y SOPORTE CLOUD</p>
-        <p class="card-desc">¿QUÉ INCLUYE? MONITOREO DE SERVIDORES Y BASES DE DATOS, RESPALDOS AUTOMÁTICOS DIARIOS, PARCHES DE SEGURIDAD, CORRECCIÓN DE BUGS Y OPTIMIZACIÓN DEL SISTEMA PARA QUE TU SOFTWARE NUNCA DEJE DE FUNCIONAR.</p>
-        <p class="card-price">DESDE $1,500 MXN / MES</p>
-        <p class="card-time">OBLIGATORIO POST ENTREGA EN PROYECTOS DE ALTO RENDIMIENTO</p>
+        <div class="accordion-item">
+          <button class="accordion-header" aria-expanded="false">
+            <span class="accordion-title">MANTENIMIENTO Y SOPORTE CLOUD</span>
+            <svg class="accordion-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+          </button>
+          <div class="accordion-body">
+            <div class="accordion-body-inner">
+              <p class="card-desc">¿QUÉ INCLUYE? MONITOREO DE SERVIDORES Y BASES DE DATOS, RESPALDOS AUTOMÁTICOS DIARIOS, PARCHES DE SEGURIDAD, CORRECCIÓN DE BUGS Y OPTIMIZACIÓN DEL SISTEMA PARA QUE TU SOFTWARE NUNCA DEJE DE FUNCIONAR.</p>
+              <p class="card-price">DESDE $1,500 MXN / MES</p>
+              <p class="card-time">OBLIGATORIO POST ENTREGA EN PROYECTOS DE ALTO RENDIMIENTO</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 </section>
+
+<script>
+  (function () {
+    var items = document.querySelectorAll('#cotizacion-section .accordion-item');
+
+    items.forEach(function (item) {
+      var header = item.querySelector('.accordion-header');
+
+      header.addEventListener('click', function () {
+        var isActive = item.classList.contains('active');
+
+        // Close all
+        items.forEach(function (otherItem) {
+          otherItem.classList.remove('active');
+          var otherHeader = otherItem.querySelector('.accordion-header');
+          if (otherHeader) otherHeader.setAttribute('aria-expanded', 'false');
+        });
+
+        // Toggle clicked
+        if (!isActive) {
+          item.classList.add('active');
+          header.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+  })();
+</script>

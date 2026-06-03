@@ -451,14 +451,14 @@
           // Si no es número, tratamos el valor como un ID de sección externa
           var targetSection = document.getElementById(targetValue);
           if (targetSection) {
-            var offset = 60; // Margen superior opcional
-            var bodyRect = document.body.getBoundingClientRect().top;
-            var elementRect = targetSection.getBoundingClientRect().top;
-            var elementPosition = elementRect - bodyRect;
-            var offsetPosition = elementPosition - offset;
+            var sectionHeight = targetSection.offsetHeight;
+            var isDesktop = window.innerWidth > 768;
+            var sectionRatio = isDesktop ? 0.40 : 0.55;
+            var viewportRatio = isDesktop ? 0.45 : 0.35;
+            var scrollTarget = scrollY + (targetSection.getBoundingClientRect().top) + (sectionHeight * sectionRatio) - (vh * viewportRatio);
 
             window.scrollTo({
-              top: offsetPosition,
+              top: Math.max(0, scrollTarget),
               behavior: 'smooth'
             });
           }

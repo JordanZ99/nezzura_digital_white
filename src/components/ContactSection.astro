@@ -1,0 +1,261 @@
+<style>
+  #contact-section {
+    background: #000000;
+    width: 100%;
+    position: relative;
+    box-sizing: border-box;
+  }
+
+  #contact-section .contact-inner {
+    max-width: 1100px;
+    width: 100%;
+    margin: 0 auto;
+    padding: clamp(80px, 10vh, 140px) 40px clamp(80px, 10vh, 140px);
+    box-sizing: border-box;
+  }
+
+  #contact-section .contact-header {
+    text-align: center;
+    margin-bottom: clamp(40px, 6vh, 72px);
+  }
+
+  #contact-section .contact-header h2 {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    font-size: clamp(28px, 3vw, 56px);
+    letter-spacing: 0.05em;
+    color: #ffffff;
+    margin: 0 0 12px 0;
+    text-transform: uppercase;
+  }
+
+  #contact-section .contact-header .contact-sub {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: clamp(15px, 1.1vw, 20px);
+    line-height: 1.5;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  #contact-section .contact-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: clamp(40px, 5vw, 80px);
+  }
+
+  #contact-section .contact-info {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #contact-section .contact-info h3 {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    font-size: clamp(18px, 1.4vw, 26px);
+    color: #ffffff;
+    margin: 0 0 16px 0;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  #contact-section .contact-info p {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: clamp(14px, 1vw, 17px);
+    line-height: 1.7;
+    color: rgba(255, 255, 255, 0.55);
+    margin: 0 0 32px 0;
+  }
+
+  #contact-section .contact-detail {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+  }
+
+  #contact-section .contact-detail-icon {
+    width: 20px;
+    height: 20px;
+    color: rgba(255, 255, 255, 0.4);
+    flex-shrink: 0;
+  }
+
+  #contact-section .contact-detail span {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: clamp(13px, 0.9vw, 15px);
+    color: rgba(255, 255, 255, 0.6);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  #contact-section .contact-form-wrap {
+    flex: 1;
+    min-width: 0;
+  }
+
+  #contact-section .contact-form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  #contact-section .form-row {
+    display: flex;
+    gap: 20px;
+  }
+
+  #contact-section .form-group {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  #contact-section .form-group label {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    font-size: clamp(11px, 0.7vw, 13px);
+    color: rgba(255, 255, 255, 0.5);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+  }
+
+  #contact-section .form-group input,
+  #contact-section .form-group textarea {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 400;
+    font-size: clamp(14px, 1vw, 16px);
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 12px;
+    padding: 16px 18px;
+    outline: none;
+    transition: border-color 0.3s ease, background 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  #contact-section .form-group input::placeholder,
+  #contact-section .form-group textarea::placeholder {
+    color: rgba(255, 255, 255, 0.3);
+  }
+
+  #contact-section .form-group input:focus,
+  #contact-section .form-group textarea:focus {
+    border-color: rgba(255, 255, 255, 0.35);
+    background: rgba(255, 255, 255, 0.09);
+  }
+
+  #contact-section .form-group textarea {
+    min-height: 120px;
+    resize: vertical;
+  }
+
+  #contact-section .form-submit {
+    align-self: flex-start;
+  }
+
+  #contact-section .form-submit button {
+    font-family: system-ui, -apple-system, sans-serif;
+    font-weight: 500;
+    font-size: clamp(13px, 0.9vw, 15px);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #000000;
+    background: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px 40px;
+    cursor: pointer;
+    transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  }
+
+  #contact-section .form-submit button:hover {
+    background: rgba(255, 255, 255, 0.88);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+  }
+
+  #contact-section .form-submit button:active {
+    transform: translateY(0);
+  }
+
+  @media (max-width: 768px) {
+    #contact-section .contact-inner {
+      padding: 80px 24px;
+    }
+
+    #contact-section .contact-layout {
+      flex-direction: column;
+      gap: 48px;
+    }
+
+    #contact-section .form-row {
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    #contact-section .form-submit {
+      align-self: stretch;
+    }
+
+    #contact-section .form-submit button {
+      width: 100%;
+    }
+  }
+</style>
+
+<section id="contact-section">
+  <div class="contact-inner">
+    <div class="contact-header">
+      <h2>HABLEMOS</h2>
+      <p class="contact-sub">Cuéntanos sobre ti</p>
+    </div>
+    <div class="contact-layout">
+      <div class="contact-info">
+        <h3>Tu idea merece empezar hoy</h3>
+        <p>Llámanos o envíanos un mensaje. Estamos listos para convertir tu visión en una solución digital que funcione.</p>
+        <div class="contact-detail">
+          <svg class="contact-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16.92z"></path></svg>
+          <span>+52 (XXX) XXX-XXXX</span>
+        </div>
+        <div class="contact-detail">
+          <svg class="contact-detail-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <span>hola@nezzura.com</span>
+        </div>
+      </div>
+      <div class="contact-form-wrap">
+        <form class="contact-form" onsubmit="return false;">
+          <div class="form-row">
+            <div class="form-group">
+              <label for="contact-name">Nombre *</label>
+              <input type="text" id="contact-name" name="name" placeholder="Tu nombre completo" required />
+            </div>
+            <div class="form-group">
+              <label for="contact-email">Correo *</label>
+              <input type="email" id="contact-email" name="email" placeholder="tu@correo.com" required />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="contact-company">Empresa</label>
+            <input type="text" id="contact-company" name="company" placeholder="Nombre de tu empresa" />
+          </div>
+          <div class="form-group">
+            <label for="contact-message">Mensaje</label>
+            <textarea id="contact-message" name="message" placeholder="Cuéntanos sobre tu proyecto, tu idea o lo que necesitas..."></textarea>
+          </div>
+          <div class="form-submit">
+            <button type="submit">ENVIAR MENSAJE</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
