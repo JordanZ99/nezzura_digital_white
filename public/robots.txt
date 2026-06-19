@@ -4,4 +4,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nezzuradigital.vercel.app/sitemap.xml
+Sitemap: https://nezzura.digital/sitemap.xml
