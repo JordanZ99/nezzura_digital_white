@@ -1,0 +1,7 @@
+# robots.txt - Nezzura Digital
+# Permite el rastreo completo a todos los motores de búsqueda
+
+User-agent: *
+Allow: /
+
+Sitemap: https://nezzuradigital.vercel.app/sitemap.xml

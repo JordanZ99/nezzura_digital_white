@@ -1,13 +1,72 @@
 ---
 import FluidGlassCursor from '../components/FluidGlassCursor.tsx';
+
+const siteTitle = 'Nezzura Digital | Desarrollo Web Premium y Soluciones de Software';
+const siteDescription = 'Creamos estructuras eficientes y diseños premium para digitalizar tu negocio en México. Sin tecnicismos, sin sorpresas.';
+const siteUrl = Astro.site?.href ?? 'https://nezzuradigital.vercel.app/';
+
+// ⚠️ Para que og:image funcione, coloca una imagen de 1200×630px en public/og-image.jpg
+const ogImage = `${siteUrl}og-image.jpg`;
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="es-MX">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Nezzura</title>
+
+  <!-- Meta Tags Básicos -->
+  <title>{siteTitle}</title>
+  <meta name="description" content={siteDescription} />
+  <meta name="robots" content="index, follow" />
+  <meta name="keywords" content="desarrollo web, software, digitalizar negocio, diseño web premium, México, Nezzura Digital, desarrollo de software" />
+  <meta name="author" content="Nezzura Digital" />
+  <meta name="language" content="es-MX" />
+
+  <!-- Canonical URL -->
+  <link rel="canonical" href={siteUrl} />
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content={siteUrl} />
+  <meta property="og:title" content={siteTitle} />
+  <meta property="og:description" content={siteDescription} />
+  <meta property="og:image" content={ogImage} />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="es_MX" />
+  <meta property="og:site_name" content="Nezzura Digital" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:url" content={siteUrl} />
+  <meta name="twitter:title" content={siteTitle} />
+  <meta name="twitter:description" content={siteDescription} />
+  <meta name="twitter:image" content={ogImage} />
+
+  <!-- Datos Estructurados JSON-LD (Organization) -->
+  <script type="application/ld+json">
+    {JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Nezzura Digital",
+      "url": siteUrl,
+      "description": siteDescription,
+      "foundingLocation": {
+        "@type": "Place",
+        "address": {
+          "@type": "PostalAddress",
+          "addressCountry": "MX"
+        }
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "availableLanguage": ["Spanish", "English"]
+      }
+    })}
+  </script>
+
   <style>
     *, *::before, *::after {
       box-sizing: border-box;
