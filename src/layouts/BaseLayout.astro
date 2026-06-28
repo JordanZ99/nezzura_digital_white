@@ -89,11 +89,313 @@ const ogImage = `${siteUrl}og-image.jpg`;
     body.glass-cursor-active *::after {
       cursor: none !important;
     }
+
+    /* ─── FLOATING NAV BUTTON ─── */
+    #nav-logo-btn {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 100000;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      border: none;
+      padding: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      background: rgba(255, 255, 255, 0.25);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.35);
+      box-shadow:
+        0 4px 16px rgba(0, 0, 0, 0.10),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5);
+      transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+      outline: none;
+    }
+
+    #nav-logo-btn:hover {
+      background: rgba(255, 255, 255, 0.35);
+      box-shadow:
+        0 6px 24px rgba(0, 0, 0, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    }
+
+    #nav-logo-btn:active {
+      transform: scale(0.9);
+    }
+
+    @media (min-width: 640px) {
+      #nav-logo-btn {
+        width: 66px;
+        height: 66px;
+      }
+    }
+
+    .logo-stack {
+      display: block;
+      position: relative;
+      width: 100%;
+      height: 100%;
+    }
+
+    .logo-stack img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.10));
+      pointer-events: none;
+      transition: opacity 0.5s ease;
+    }
+
+    .logo-white {
+      opacity: 0;
+    }
+
+    @keyframes spin-fast {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    .logo-stack.spin {
+      animation: spin-fast 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    /* ─── NAV OVERLAY ─── */
+    #nav-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(0, 0, 0, 0.85);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.4s ease;
+      will-change: opacity;
+    }
+
+    #nav-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    #nav-overlay.closing {
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    #nav-overlay nav {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 32px;
+    }
+
+    #nav-overlay .nav-link {
+      font-family: system-ui, -apple-system, sans-serif;
+      font-weight: 400;
+      font-size: clamp(24px, 4vw, 42px);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: rgba(255, 255, 255, 0.7);
+      background: none;
+      border: none;
+      padding: 4px 0;
+      cursor: pointer;
+      position: relative;
+      transition: color 0.3s ease, letter-spacing 0.3s ease;
+      outline: none;
+    }
+
+    #nav-overlay .nav-link::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      width: 0;
+      height: 1.5px;
+      background: #ffffff;
+      transition: width 0.3s ease, left 0.3s ease;
+    }
+
+    #nav-overlay .nav-link:hover,
+    #nav-overlay .nav-link:focus-visible {
+      color: #ffffff;
+      letter-spacing: 0.15em;
+    }
+
+    #nav-overlay .nav-link:hover::after,
+    #nav-overlay .nav-link:focus-visible::after {
+      width: 100%;
+      left: 0;
+    }
+
+    /* Evitar scroll del body cuando el menú está abierto */
+    html.menu-open {
+      overflow: hidden;
+    }
   </style>
 </head>
 <body>
   <slot />
+
+  <!-- ─── Floating Navigation Button ─── -->
+  <button id="nav-logo-btn" aria-label="Abrir menú de navegación">
+    <span class="logo-stack">
+      <img class="logo-dark" src="/logo.png" alt="Nezzura" />
+      <img class="logo-white" src="/logo%20blanco.png" alt="Nezzura" />
+    </span>
+  </button>
+
+  <!-- ─── Navigation Overlay ─── -->
+  <div id="nav-overlay">
+    <nav>
+      <button class="nav-link" data-section="hero">Inicio</button>
+      <button class="nav-link" data-section="steps-section">Proceso</button>
+      <button class="nav-link" data-section="cotizacion-section">Servicios</button>
+      <button class="nav-link" data-section="contact-section">Contacto</button>
+    </nav>
+  </div>
+
   <!-- Cursor de vidrio fluido — solo se monta en el cliente (Three.js no corre en SSR) -->
   <FluidGlassCursor client:only="react" />
+
+  <script>
+    (function () {
+      var btn = document.getElementById('nav-logo-btn');
+      var logoStack = document.querySelector('.logo-stack');
+      var logoDark = document.querySelector('.logo-dark');
+      var logoWhite = document.querySelector('.logo-white');
+      var overlay = document.getElementById('nav-overlay');
+      var navLinks = overlay ? Array.from(overlay.querySelectorAll('.nav-link')) : [];
+
+      if (!btn || !logoStack || !logoDark || !logoWhite || !overlay) return;
+
+      var menuOpen = false;
+      var isClosing = false;
+      var stepsSection = document.getElementById('steps-section');
+
+      // ─── EASE IN-OUT QUAD ───
+      function easeInOutQuad(t) {
+        return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t;
+      }
+
+      // ─── SPIN ANIMATION ───
+      function spinLogo() {
+        logoStack.classList.remove('spin');
+        void logoStack.offsetWidth;
+        logoStack.classList.add('spin');
+        setTimeout(function () {
+          logoStack.classList.remove('spin');
+        }, 250);
+      }
+
+      // ─── UPDATE LOGO CROSSFADE BY SCROLL ───
+      function updateLogoCrossfade() {
+        if (menuOpen || !stepsSection) return;
+
+        var rect = stepsSection.getBoundingClientRect();
+        var vh = window.innerHeight;
+
+        // revealProgress: 0 when section is below viewport, 1 when top reaches viewport top
+        var revealProgress = Math.max(0, Math.min(1, 1 - rect.top / vh));
+
+        // Crossfade between threshold 0.75 and 1.0
+        var crossfadeProgress = Math.max(0, Math.min(1, (revealProgress - 0.75) / (1.0 - 0.75)));
+        var eased = easeInOutQuad(crossfadeProgress);
+
+        logoDark.style.opacity = (1 - eased).toString();
+        logoWhite.style.opacity = eased.toString();
+      }
+
+      // ─── OPEN MENU ───
+      function openMenu() {
+        menuOpen = true;
+        // Force dark logo while menu is open
+        logoDark.style.opacity = '1';
+        logoWhite.style.opacity = '0';
+        overlay.classList.add('open');
+        document.documentElement.classList.add('menu-open');
+      }
+
+      // ─── CLOSE MENU ───
+      function closeMenu() {
+        if (isClosing) return;
+        isClosing = true;
+        menuOpen = false;
+
+        overlay.classList.remove('open');
+        overlay.classList.add('closing');
+        document.documentElement.classList.remove('menu-open');
+
+        // Restore scroll-based crossfade
+        updateLogoCrossfade();
+
+        setTimeout(function () {
+          overlay.classList.remove('closing');
+          isClosing = false;
+        }, 300);
+      }
+
+      // ─── TOGGLE ───
+      function toggleMenu() {
+        spinLogo();
+        if (menuOpen) {
+          closeMenu();
+        } else {
+          openMenu();
+        }
+      }
+
+      btn.addEventListener('click', toggleMenu);
+
+      // ─── ESCAPE KEY ───
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && menuOpen) {
+          closeMenu();
+        }
+      });
+
+      // ─── NAV LINKS: CLOSE + SCROLL ───
+      navLinks.forEach(function (link) {
+        link.addEventListener('click', function () {
+          var sectionId = link.getAttribute('data-section');
+          closeMenu();
+
+          if (sectionId) {
+            var target = document.getElementById(sectionId);
+            if (target) {
+              setTimeout(function () {
+                target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              }, 350);
+            }
+          }
+        });
+      });
+
+      // ─── SCROLL CROSSFADE ───
+      var scrollTicking = false;
+      window.addEventListener('scroll', function () {
+        if (!scrollTicking) {
+          window.requestAnimationFrame(function () {
+            updateLogoCrossfade();
+            scrollTicking = false;
+          });
+          scrollTicking = true;
+        }
+      }, { passive: true });
+
+      // Initial update
+      setTimeout(updateLogoCrossfade, 100);
+    })();
+  </script>
 </body>
 </html>
