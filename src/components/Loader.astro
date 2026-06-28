@@ -3,7 +3,7 @@
     position: fixed;
     inset: 0;
     background: #ffffff;
-    z-index: 9000;
+    z-index: 100001;
     display: flex;
     align-items: center;
     overflow: hidden;
@@ -70,6 +70,9 @@
         document.documentElement.style.height = '';
         document.body.style.overflow = '';
         document.body.style.height = '';
+        // Restaurar el z-index original del título NEZZURA (abajo del nav menu)
+        var letters = document.getElementById('page-letters');
+        if (letters) letters.style.zIndex = '10000';
       }, 750);
     }, exitAt);
   })();
