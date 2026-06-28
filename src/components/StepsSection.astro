@@ -451,7 +451,7 @@
           // Si no es número, tratamos el valor como un ID de sección externa
           var targetSection = document.getElementById(targetValue);
           if (targetSection) {
-            var offset = 66;
+            var offset = window.innerWidth <= 768 ? 86 : 50;
             var scrollTarget = window.scrollY + targetSection.getBoundingClientRect().top - offset;
 
             window.scrollTo({
