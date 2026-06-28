@@ -1,6 +1,6 @@
 import { useRef, useEffect, useState } from 'react';
 
-const SIZE = 96; // cursor diameter in px
+const SIZE = 66; // cursor diameter in px (same as nav button)
 const LERP = 0.13; // smoothing (lower = more lag, higher = snappier)
 
 /**
