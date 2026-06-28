@@ -451,7 +451,8 @@
           // Si no es número, tratamos el valor como un ID de sección externa
           var targetSection = document.getElementById(targetValue);
           if (targetSection) {
-            var scrollTarget = window.scrollY + targetSection.getBoundingClientRect().top;
+            var offset = 66;
+            var scrollTarget = window.scrollY + targetSection.getBoundingClientRect().top - offset;
 
             window.scrollTo({
               top: Math.max(0, scrollTarget),
