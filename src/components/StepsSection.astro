@@ -279,7 +279,7 @@
             <p class="step-num">04</p>
             <p class="step-title">Lanzamiento y soporte continuo</p>
             <p class="step-desc">Tu software sale al mundo de forma segura. Te incluimos 30 d&iacute;as de soporte real gratis y te dejamos configurado el plan de mantenimiento cloud para que tu negocio nunca deje de funcionar.</p>
-            <button class="step-next-btn" data-target="cotizacion-section" aria-label="Siguiente sección">
+            <button class="step-next-btn" data-target="cotizacion-header" aria-label="Siguiente sección">
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="2 8 12 16 22 8"></polyline></svg>
             </button>
           </div>
@@ -451,11 +451,7 @@
           // Si no es número, tratamos el valor como un ID de sección externa
           var targetSection = document.getElementById(targetValue);
           if (targetSection) {
-            var sectionHeight = targetSection.offsetHeight;
-            var isDesktop = window.innerWidth > 768;
-            var sectionRatio = isDesktop ? 0.40 : 0.55;
-            var viewportRatio = isDesktop ? 0.45 : 0.35;
-            var scrollTarget = scrollY + (targetSection.getBoundingClientRect().top) + (sectionHeight * sectionRatio) - (vh * viewportRatio);
+            var scrollTarget = window.scrollY + targetSection.getBoundingClientRect().top;
 
             window.scrollTo({
               top: Math.max(0, scrollTarget),
