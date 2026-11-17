@@ -1,12 +1,69 @@
 ---
 import FluidGlassCursor from '../components/FluidGlassCursor.tsx';
 
-const siteTitle = 'Nezzura Digital | Desarrollo Web Premium y Soluciones de Software';
-const siteDescription = 'Creamos estructuras eficientes y diseños premium para digitalizar tu negocio en México. Sin tecnicismos, sin sorpresas.';
+interface Props {
+  title?: string;
+  description?: string;
+}
+
+const { title = 'Nezzura Digital | Desarrollo Web Premium y Soluciones de Software', description = 'Creamos estructuras eficientes y diseños premium para digitalizar tu negocio en México. Sin tecnicismos, sin sorpresas.' } = Astro.props;
+
+const siteTitle = title;
+const siteDescription = description;
 const siteUrl = Astro.site?.href ?? 'https://nezzura.digital/';
 
 // ⚠️ Para que og:image funcione, coloca una imagen de 1200×630px en public/og-image.jpg
 const ogImage = `${siteUrl}og-image.jpg`;
+
+// ─── Schema.org: entidad de marca ───
+// Fortalece a "Nezzura Digital" como entidad única ante Google y protege la marca
+// frente a competidores con nombres similares (Nexura, Nexaura, etc.).
+const orgSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': `${siteUrl}#organization`,
+  'name': 'Nezzura Digital',
+  'url': siteUrl,
+  'logo': `${siteUrl}logo.png`,
+  'image': ogImage,
+  'description': siteDescription,
+  'email': 'contacto@nezzura.digital',
+  'address': {
+    '@type': 'PostalAddress',
+    'addressCountry': 'MX',
+  },
+  'areaServed': {
+    '@type': 'Country',
+    'name': 'México',
+  },
+  'contactPoint': {
+    '@type': 'ContactPoint',
+    'contactType': 'customer service',
+    'email': 'contacto@nezzura.digital',
+    'availableLanguage': ['Spanish', 'English'],
+  },
+  'hasOfferCatalog': {
+    '@type': 'OfferCatalog',
+    'name': 'Servicios de Nezzura Digital',
+    'itemListElement': [
+      { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': 'Landing pages profesionales', 'url': `${siteUrl}desarrollo-web/` } },
+      { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': 'Menú digital interactivo para restaurantes', 'url': `${siteUrl}menu-digital/` } },
+      { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': 'Páginas web completas y portafolios', 'url': `${siteUrl}desarrollo-web/` } },
+      { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': 'Aplicaciones web y software a medida', 'url': `${siteUrl}aplicaciones-web/` } },
+      { '@type': 'Offer', 'itemOffered': { '@type': 'Service', 'name': 'Mantenimiento web y soporte cloud', 'url': `${siteUrl}mantenimiento/` } },
+    ],
+  },
+};
+
+const websiteSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'WebSite',
+  '@id': `${siteUrl}#website`,
+  'url': siteUrl,
+  'name': 'Nezzura Digital',
+  'inLanguage': 'es-MX',
+  'publisher': { '@id': `${siteUrl}#organization` },
+};
 ---
 
 <!doctype html>
@@ -22,7 +79,6 @@ const ogImage = `${siteUrl}og-image.jpg`;
   <title>{siteTitle}</title>
   <meta name="description" content={siteDescription} />
   <meta name="robots" content="index, follow" />
-  <meta name="keywords" content="desarrollo web, software, digitalizar negocio, diseño web premium, México, Nezzura Digital, desarrollo de software" />
   <meta name="author" content="Nezzura Digital" />
   <meta name="language" content="es-MX" />
 
@@ -47,28 +103,9 @@ const ogImage = `${siteUrl}og-image.jpg`;
   <meta name="twitter:description" content={siteDescription} />
   <meta name="twitter:image" content={ogImage} />
 
-  <!-- Datos Estructurados JSON-LD (Organization) -->
-  <script type="application/ld+json">
-    {JSON.stringify({
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Nezzura Digital",
-      "url": siteUrl,
-      "description": siteDescription,
-      "foundingLocation": {
-        "@type": "Place",
-        "address": {
-          "@type": "PostalAddress",
-          "addressCountry": "MX"
-        }
-      },
-      "contactPoint": {
-        "@type": "ContactPoint",
-        "contactType": "customer service",
-        "availableLanguage": ["Spanish", "English"]
-      }
-    })}
-  </script>
+  <!-- Datos Estructurados JSON-LD: entidad de marca (ProfessionalService) + sitio web -->
+  <script type="application/ld+json" set:html={JSON.stringify(orgSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(websiteSchema)} />
 
   <style>
     *, *::before, *::after {
@@ -245,6 +282,19 @@ const ogImage = `${siteUrl}og-image.jpg`;
     html.menu-open {
       overflow: hidden;
     }
+
+    /* Visible solo para lectores de pantalla / buscadores */
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      border: 0;
+    }
   </style>
 </head>
 <body>
@@ -379,6 +429,9 @@ const ogImage = `${siteUrl}og-image.jpg`;
               setTimeout(function () {
                 target.scrollIntoView({ behavior: 'smooth', block: 'start' });
               }, 350);
+            } else {
+              // Sección no presente (página de servicio): ir al inicio con el ancla
+              window.location.href = sectionId === 'hero' ? '/' : '/#' + sectionId;
             }
           }
         });

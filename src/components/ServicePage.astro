@@ -1,0 +1,276 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+interface Props {
+  title: string;
+  description: string;
+  slug: string;
+  tag: string;
+  h1: string;
+  lead: string;
+  paragraphs: string[];
+  includes: string[];
+  price: string;
+  priceNote: string;
+}
+
+const { title, description, slug, tag, h1, lead, paragraphs, includes, price, priceNote } = Astro.props;
+
+const siteUrl = Astro.site?.href ?? 'https://nezzura.digital/';
+
+// Catálogo de servicios para enlaces cruzados (internal linking)
+const SERVICES: { slug: string; label: string }[] = [
+  { slug: 'desarrollo-web', label: 'Páginas web y landing pages' },
+  { slug: 'menu-digital', label: 'Menú digital interactivo' },
+  { slug: 'aplicaciones-web', label: 'Aplicaciones web a medida' },
+  { slug: 'mantenimiento', label: 'Mantenimiento y soporte cloud' },
+];
+const others = SERVICES.filter((s) => s.slug !== slug);
+
+// BreadcrumbList: Home > Servicio
+const breadcrumbSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  'itemListElement': [
+    { '@type': 'ListItem', 'position': 1, 'name': 'Inicio', 'item': siteUrl },
+    { '@type': 'ListItem', 'position': 2, 'name': h1, 'item': `${siteUrl}${slug}/` },
+  ],
+};
+---
+
+<BaseLayout title={title} description={description}>
+  <script type="application/ld+json" set:html={JSON.stringify(breadcrumbSchema)} />
+
+  <article class="service-page">
+    <header class="service-header">
+      <nav class="crumbs" aria-label="Ruta de navegación">
+        <a href="/">Inicio</a>
+        <span aria-hidden="true">/</span>
+        <span aria-current="page">{tag}</span>
+      </nav>
+      <p class="service-tag">{tag}</p>
+      <h1>{h1}</h1>
+      <p class="lead">{lead}</p>
+      <a class="cta" href="/#contact-section">Solicitar cotización</a>
+    </header>
+
+    <section class="service-body">
+      {paragraphs.map((p) => <p>{p}</p>)}
+    </section>
+
+    <section class="service-includes" aria-labelledby="includes-title">
+      <h2 id="includes-title">Qué incluye</h2>
+      <ul>
+        {includes.map((item) => <li>{item}</li>)}
+      </ul>
+    </section>
+
+    <section class="service-price" aria-label="Precio del servicio">
+      <p class="price-label">Inversión</p>
+      <p class="price-value">{price}</p>
+      <p class="price-note">{priceNote}</p>
+    </section>
+
+    <section class="service-others" aria-labelledby="others-title">
+      <h2 id="others-title">Otros servicios de Nezzura Digital</h2>
+      <ul>
+        {others.map((s) => (
+          <li>
+            <a href={`/${s.slug}/`}>{s.label}</a>
+          </li>
+        ))}
+        <li>
+          <a href="/#cotizacion-section">Ver todos los servicios y precios</a>
+        </li>
+      </ul>
+    </section>
+  </article>
+</BaseLayout>
+
+<style>
+  .service-page {
+    min-height: 100vh;
+    background: #000000;
+    color: #ffffff;
+    font-family: system-ui, -apple-system, sans-serif;
+    padding: clamp(80px, 12vh, 140px) 24px 100px;
+    box-sizing: border-box;
+  }
+
+  .service-header,
+  .service-body,
+  .service-includes,
+  .service-price,
+  .service-others {
+    max-width: 760px;
+    margin: 0 auto;
+    box-sizing: border-box;
+  }
+
+  .crumbs {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    font-size: clamp(11px, 0.8vw, 13px);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: rgba(255, 255, 255, 0.45);
+    margin-bottom: clamp(40px, 6vh, 70px);
+  }
+
+  .crumbs a {
+    color: rgba(255, 255, 255, 0.6);
+    text-decoration: none;
+    transition: color 0.3s ease;
+  }
+
+  .crumbs a:hover {
+    color: #ffffff;
+  }
+
+  .service-tag {
+    font-size: clamp(12px, 0.9vw, 15px);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 0 14px 0;
+  }
+
+  .service-header h1 {
+    font-weight: 500;
+    font-size: clamp(30px, 4.5vw, 56px);
+    line-height: 1.15;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    margin: 0 0 20px 0;
+  }
+
+  .lead {
+    font-size: clamp(15px, 1.3vw, 19px);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.75);
+    margin: 0 0 32px 0;
+  }
+
+  .cta {
+    display: inline-block;
+    background: #ffffff;
+    color: #000000;
+    text-decoration: none;
+    font-weight: 500;
+    font-size: clamp(13px, 0.9vw, 15px);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    border-radius: 12px;
+    padding: 16px 40px;
+    transition: transform 0.2s ease, box-shadow 0.3s ease;
+  }
+
+  .cta:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 20px rgba(255, 255, 255, 0.15);
+  }
+
+  .service-body {
+    margin-top: clamp(60px, 8vh, 90px);
+  }
+
+  .service-body p {
+    font-size: clamp(14px, 1.05vw, 17px);
+    line-height: 1.8;
+    color: rgba(255, 255, 255, 0.65);
+    margin: 0 0 22px 0;
+  }
+
+  .service-includes {
+    margin-top: clamp(60px, 8vh, 90px);
+  }
+
+  .service-includes h2,
+  .service-others h2 {
+    font-weight: 500;
+    font-size: clamp(20px, 2vw, 28px);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 24px 0;
+  }
+
+  .service-includes ul,
+  .service-others ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .service-includes li {
+    font-size: clamp(13px, 1vw, 16px);
+    line-height: 1.6;
+    color: rgba(255, 255, 255, 0.75);
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+  }
+
+  .service-price {
+    margin-top: clamp(60px, 8vh, 90px);
+    padding: clamp(28px, 4vw, 44px);
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: 20px;
+  }
+
+  .price-label {
+    font-size: clamp(11px, 0.8vw, 13px);
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 0 0 10px 0;
+  }
+
+  .price-value {
+    font-weight: 600;
+    font-size: clamp(24px, 2.4vw, 34px);
+    margin: 0 0 8px 0;
+  }
+
+  .price-note {
+    font-size: clamp(12px, 0.9vw, 14px);
+    color: rgba(255, 255, 255, 0.55);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0;
+  }
+
+  .service-others {
+    margin-top: clamp(60px, 8vh, 90px);
+  }
+
+  .service-others a {
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    font-size: clamp(13px, 1vw, 16px);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 16px 20px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 14px;
+    transition: background 0.3s ease, color 0.3s ease;
+    display: block;
+  }
+
+  .service-others a:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+  }
+
+  @media (max-width: 768px) {
+    .service-page {
+      padding: 60px 20px 80px;
+    }
+  }
+</style>
