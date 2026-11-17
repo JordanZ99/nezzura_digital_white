@@ -58,7 +58,8 @@
     pointer-events: none;
   }
 
-  #steps-section .blackhole-bg img {
+  #steps-section .blackhole-bg img,
+  #steps-section .blackhole-bg video {
     width: 100%;
     height: 100%;
     object-fit: cover;
@@ -235,7 +236,10 @@
   <div class="steps-sticky">
     <div class="steps-mask">
       <div class="blackhole-bg">
-        <img src="/assets/blackhole/scene00001.webp" alt="" id="blackhole-frame" />
+        <video id="blackhole-video" muted playsinline preload="auto" disablepictureinpicture>
+          <source src="/assets/videos/blackhole.webm" type="video/webm" />
+          <source src="/assets/videos/blackhole.mp4" type="video/mp4" />
+        </video>
       </div>
       <div class="steps-inner">
         <div class="steps-header">
@@ -295,22 +299,19 @@
     var mask = section && section.querySelector('.steps-mask');
     var inner = section && section.querySelector('.steps-inner');
     var cards = mask ? Array.from(mask.querySelectorAll('.step-card')) : [];
-    var blackholeImg = document.getElementById('blackhole-frame');
+    var blackholeVideo = document.getElementById('blackhole-video');
 
     if (!section || !mask || !inner || cards.length === 0) return;
 
     var TOTAL_FRAMES = 96;
-    var FRAME_STEP = 8;
-    var BASE_PATH = '/assets/blackhole/';
+    var FPS = 30;
+    var VIDEO_DURATION = TOTAL_FRAMES / FPS;
     var CARD_SCALE_RANGE = 300;
     var CARD_SCALE_STRENGTH = 0.3;
     var EXTRA_SCROLL_OFFSET = 100;
 
     var ticking = false;
     var vh = window.innerHeight;
-    var currentFrame = -1;
-    var frameCache = {};
-    var preloadStarted = false;
     var metrics = {
       sectionTop: 0,
       sectionHeight: 0,
@@ -318,22 +319,27 @@
       maxTranslate: 0
     };
 
+    // ─── VIDEO SCRUB: el scroll controla currentTime ───
+    var videoReady = false;
+    var pendingSeek = -1;
+    var lastVideoTarget = -1;
+
+    if (blackholeVideo) {
+      blackholeVideo.addEventListener('loadedmetadata', function () {
+        videoReady = true;
+        if (pendingSeek >= 0) {
+          blackholeVideo.currentTime = pendingSeek;
+          pendingSeek = -1;
+        }
+      });
+    }
+
     function getScrollY() {
       return window.scrollY || window.pageYOffset || 0;
     }
 
     function clamp01(value) {
       return Math.max(0, Math.min(1, value));
-    }
-
-    function padFrame(n) {
-      var s = '00000' + n;
-      return s.slice(-5);
-    }
-
-    function frameSrc(index) {
-      var frameNum = 1 + index * FRAME_STEP;
-      return BASE_PATH + 'scene' + padFrame(frameNum) + '.webp';
     }
 
     function getAbsoluteTop(el) {
@@ -356,40 +362,23 @@
       inner.style.transform = prevTransform;
     }
 
-    function setFrameByProgress(progress) {
-      if (!blackholeImg) return;
+    function setVideoFrame(progress) {
+      if (!blackholeVideo) return;
       var frameIndex = Math.min(TOTAL_FRAMES - 1, Math.round(progress * (TOTAL_FRAMES - 1)));
-      if (frameIndex === currentFrame) return;
-      currentFrame = frameIndex;
-      blackholeImg.src = frameCache[frameIndex] ? frameCache[frameIndex].src : frameSrc(frameIndex);
-    }
-
-    function preloadAllFrames() {
-      if (preloadStarted) return;
-      preloadStarted = true;
-      for (var i = 0; i < TOTAL_FRAMES; i++) {
-        (function (idx) {
-          var img = new Image();
-          img.onload = function () {
-            frameCache[idx] = img;
-          };
-          img.src = frameSrc(idx);
-        })(i);
+      var t = Math.min(VIDEO_DURATION - 0.01, frameIndex / FPS);
+      if (t === lastVideoTarget) return;
+      lastVideoTarget = t;
+      if (!videoReady) {
+        pendingSeek = t;
+        return;
       }
+      blackholeVideo.currentTime = t;
     }
-
-    var preloadObserver = new IntersectionObserver(function (entries) {
-      if (entries[0].isIntersecting) {
-        preloadAllFrames();
-        preloadObserver.disconnect();
-      }
-    }, { rootMargin: '1500px 0px 0px 0px' });
-    preloadObserver.observe(section);
 
     function applyTransforms(progress, inSection) {
       var currentTranslate = progress * metrics.maxTranslate;
       inner.style.transform = 'translateY(-' + currentTranslate + 'px)';
-      setFrameByProgress(progress);
+      setVideoFrame(progress);
 
       var centerViewport = vh / 2;
       for (var i = 0; i < cards.length; i++) {
@@ -429,7 +418,7 @@
 
     window.addEventListener('resize', function () {
       vh = window.innerHeight;
-      currentFrame = -1;
+      lastVideoTarget = -1;
       recalcMetrics();
       requestUpdate();
     }, { passive: true });
